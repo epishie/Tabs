@@ -1,0 +1,106 @@
+/*
+ * Copyright 2016 Epishie
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.epishie.ripley"
+        minSdkVersion 9
+        targetSdkVersion 23
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        buildConfigField "String", "BASE_URL", "\"http://reddit.com\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    supportLibVersion = '23.2.1'
+    daggerVersion = '2.1'
+    rxjavaVersion = '1.1.2'
+    rxandroidVersion = '1.1.0'
+    okhttpVersion = '3.2.0'
+    retrofitVersion = '2.0.0'
+    gsonVersion = '2.6.2'
+    junitVersion = '4.12'
+    assertjVersion = '1.1.1'
+    robolectricVersion = '3.0'
+    mockitoVersion = '1.10.19'
+}
+
+dependencies {
+    // ANDROID
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:percent:${supportLibVersion}"
+
+    // DEPENDENCY INJECTION
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    provided 'javax.annotation:jsr250-api:1.0'
+
+    // REACTIVE
+    compile "io.reactivex:rxjava:${rxjavaVersion}"
+    compile "io.reactivex:rxandroid:${rxandroidVersion}"
+
+    // RETROFIT
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
+    testCompile "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
+
+    // JSON
+    compile "com.google.code.gson:gson:${gsonVersion}"
+
+    // UNIT TEST
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.robolectric:robolectric:${robolectricVersion}"
+
+    // ASSERTIONS
+    testCompile "org.assertj:assertj-core:$assertjVersion"
+    testCompile ("com.squareup.assertj:assertj-android:$assertjVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    testCompile ("com.squareup.assertj:assertj-android-support-v4:$assertjVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
+    testCompile ("com.squareup.assertj:assertj-android-design:$assertjVersion@aar") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
+    testCompile ("com.squareup.assertj:assertj-android-recyclerview-v7:$assertjVersion@aar") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
+
+    // MOCKS
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
+}
