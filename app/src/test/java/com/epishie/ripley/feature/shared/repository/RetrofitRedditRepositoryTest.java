@@ -110,4 +110,35 @@ public class RetrofitRedditRepositoryTest {
 
         subscriber.assertValueCount(1);
     }
+
+    @Test
+    public void testResponseCached() {
+        String json = "{" +
+                "   \"data\": {" +
+                "       \"after\": \"token\", " +
+                "       \"children\": [" +
+                "           {" +
+                "               \"data\": {" +
+                "                   \"url\": \"/r/gadgets/\"" +
+                "               }" +
+                "           }" +
+                "       ]" +
+                "   }" +
+                "}";
+        mServer.enqueue(new MockResponse()
+                .setBody(json)
+                .setResponseCode(200));
+        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits()
+                .subscribeOn(mScheduler)
+                .subscribe(subscriber);
+        mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+        mRepository.getSubreddits()
+                .subscribeOn(mScheduler)
+                .subscribe(subscriber);
+        mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+        subscriber.assertValueCount(1);
+        assertThat(mServer.getRequestCount()).isEqualTo(1);
+    }
 }

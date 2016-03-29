@@ -17,6 +17,7 @@
 package com.epishie.ripley.feature.shared.repository;
 
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.util.LruCache;
 
 import com.epishie.ripley.error.ConnectionError;
 import com.epishie.ripley.error.ResponseError;
@@ -35,11 +36,14 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.GET;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class RetrofitRedditRepository implements RedditRepository {
     private final Service mService;
     private final Gson mGson;
+
+    private final LruCache<String, Subreddits> mSubredditsCache;
 
     public RetrofitRedditRepository(String baseUrl) {
         Retrofit retrofit = new Retrofit.Builder()
@@ -49,16 +53,35 @@ public class RetrofitRedditRepository implements RedditRepository {
                 .build();
         mService = retrofit.create(Service.class);
         mGson = new GsonBuilder().create();
+
+        mSubredditsCache = new LruCache<>(5000 * 1024);
     }
 
     @Override
     public Observable<Subreddits> getSubreddits() {
+        return Observable.concat(Observable.just(mSubredditsCache.get("default")),
+                getSubredditsOnline())
+                .first(new Func1<Subreddits, Boolean>() {
+                    @Override
+                    public Boolean call(Subreddits subreddits) {
+                        return subreddits != null;
+                    }
+                });
+    }
+
+    private Observable<Subreddits> getSubredditsOnline() {
         return mService.getSubreddits()
                 .map(getSubredditsMapper())
                 .onErrorReturn(new Func1<Throwable, Subreddits>() {
                     @Override
                     public Subreddits call(Throwable throwable) {
                         throw new ConnectionError(throwable);
+                    }
+                })
+                .doOnNext(new Action1<Subreddits>() {
+                    @Override
+                    public void call(Subreddits subreddits) {
+                        mSubredditsCache.put("default", subreddits);
                     }
                 });
     }
