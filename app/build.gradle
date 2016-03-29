@@ -74,6 +74,7 @@ dependencies {
     // RETROFIT
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     testCompile "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 
     // JSON
