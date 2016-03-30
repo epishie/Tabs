@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2016 Epishie
   ~
@@ -14,12 +15,10 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Ripley</string>
-
-    <string name="lbl_subreddits">Subreddits</string>
-    <string name="lbl_default_subreddits">Default</string>
-
-    <string name="des_drawer_open">Drawer open</string>
-    <string name="des_drawer_close">Drawer close</string>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/lbl_subreddits">
+        <menu>
+            <item android:title="@string/lbl_default_subreddits" />
+        </menu>
+    </item>
+</menu>

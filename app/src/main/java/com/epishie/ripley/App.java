@@ -17,6 +17,7 @@
 package com.epishie.ripley;
 
 import android.app.Application;
+import android.support.annotation.VisibleForTesting;
 
 import com.epishie.ripley.di.AppComponent;
 import com.epishie.ripley.di.DaggerAppComponent;
@@ -32,5 +33,10 @@ public class App extends Application {
 
     public AppComponent getComponent() {
         return mComponent;
+    }
+
+    @VisibleForTesting
+    public void setComponent(AppComponent component) {
+        mComponent = component;
     }
 }

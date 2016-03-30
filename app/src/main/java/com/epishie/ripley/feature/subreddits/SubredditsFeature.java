@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.di;
+package com.epishie.ripley.feature.subreddits;
 
-import com.epishie.ripley.feature.subreddits.SubredditsActivity;
+import java.util.List;
 
-import javax.inject.Singleton;
-
-import dagger.Component;
-
-@Singleton
-@Component(modules = AppModule.class)
-public interface AppComponent {
-    void inject(SubredditsActivity activity);
+public interface SubredditsFeature {
+    interface View {
+        void showSubreddits(List<SubredditViewModel> subreddits);
+    }
+    interface Presenter {
+        void setView(View view);
+        void onLoad();
+    }
 }

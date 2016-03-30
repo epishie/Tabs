@@ -16,6 +16,12 @@
 
 package com.epishie.ripley.di;
 
+import com.epishie.ripley.BuildConfig;
+import com.epishie.ripley.feature.shared.repository.RedditRepository;
+import com.epishie.ripley.feature.shared.repository.RetrofitRedditRepository;
+import com.epishie.ripley.feature.subreddits.SubredditsFeature;
+import com.epishie.ripley.feature.subreddits.SubredditsPresenter;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -39,5 +45,18 @@ public class AppModule {
     @Provides
     public Scheduler provideWorkerScheduler() {
         return Schedulers.newThread();
+    }
+
+    @Singleton
+    @Provides
+    public RedditRepository provideRedditRepository() {
+        return new RetrofitRedditRepository(BuildConfig.BASE_URL);
+    }
+
+    @Provides
+    public SubredditsFeature.Presenter provideSubredditsPresenter(RedditRepository repository,
+                                                                  @Named("main") Scheduler mainScheduler,
+                                                                  @Named("worker") Scheduler workerScheduler) {
+        return new SubredditsPresenter(repository, mainScheduler, workerScheduler);
     }
 }
