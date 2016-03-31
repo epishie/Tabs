@@ -21,4 +21,22 @@
         <item name="colorAccent">@color/blue_grey_500</item>
     </style>
     <style name="AppTheme" parent="BaseTheme" />
+    <!-- Posts -->
+    <style name="AppTheme.Post">
+        <item name="android:background">?selectableItemBackground</item>
+    </style>
+    <style name="AppTheme.Post.Title">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:singleLine">false</item>
+    </style>
+    <style name="AppTheme.Post.ByLine">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+    <style name="AppTheme.Post.Score">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

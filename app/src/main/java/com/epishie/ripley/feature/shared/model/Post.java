@@ -14,18 +14,37 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.di;
+package com.epishie.ripley.feature.shared.model;
 
-import com.epishie.ripley.feature.posts.PostsFragment;
-import com.epishie.ripley.feature.subreddits.SubredditsActivity;
+public class Post {
+    String title;
+    String url;
+    String author;
+    int num_comments;
+    int score;
+    long created_utc;
 
-import javax.inject.Singleton;
+    public String getTitle() {
+        return title;
+    }
 
-import dagger.Component;
+    public String getUrl() {
+        return url;
+    }
 
-@Singleton
-@Component(modules = AppModule.class)
-public interface AppComponent {
-    void inject(SubredditsActivity activity);
-    void inject(PostsFragment fragment);
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getCommentCount() {
+        return num_comments;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public long getCreated() {
+        return created_utc;
+    }
 }

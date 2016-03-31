@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.di;
+package com.epishie.ripley.feature.shared.model;
 
-import com.epishie.ripley.feature.posts.PostsFragment;
-import com.epishie.ripley.feature.subreddits.SubredditsActivity;
+import java.util.List;
 
-import javax.inject.Singleton;
+public class Posts {
+    String after;
+    List<Post> children;
 
-import dagger.Component;
+    public String getAfter() {
+        return after;
+    }
 
-@Singleton
-@Component(modules = AppModule.class)
-public interface AppComponent {
-    void inject(SubredditsActivity activity);
-    void inject(PostsFragment fragment);
+    public List<Post> getChildren() {
+        return children;
+    }
 }

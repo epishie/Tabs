@@ -21,6 +21,7 @@ import android.support.v4.util.LruCache;
 
 import com.epishie.ripley.error.ConnectionError;
 import com.epishie.ripley.error.ResponseError;
+import com.epishie.ripley.feature.shared.model.Posts;
 import com.epishie.ripley.feature.shared.model.Subreddits;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,6 +36,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -44,6 +46,7 @@ public class RetrofitRedditRepository implements RedditRepository {
     private final Gson mGson;
 
     private final LruCache<String, Subreddits> mSubredditsCache;
+    private final LruCache<String, Posts> mPostsCache;
 
     public RetrofitRedditRepository(String baseUrl) {
         Retrofit retrofit = new Retrofit.Builder()
@@ -55,6 +58,7 @@ public class RetrofitRedditRepository implements RedditRepository {
         mGson = new GsonBuilder().create();
 
         mSubredditsCache = new LruCache<>(5000 * 1024);
+        mPostsCache = new LruCache<>(5000 * 1024);
     }
 
     @Override
@@ -65,6 +69,18 @@ public class RetrofitRedditRepository implements RedditRepository {
                     @Override
                     public Boolean call(Subreddits subreddits) {
                         return subreddits != null;
+                    }
+                });
+    }
+
+    @Override
+    public Observable<Posts> getPosts(String subreddit) {
+        return Observable.concat(Observable.just(mPostsCache.get(subreddit)),
+                getPostsOnline(subreddit))
+                .first(new Func1<Posts, Boolean>() {
+                    @Override
+                    public Boolean call(Posts posts) {
+                        return posts != null;
                     }
                 });
     }
@@ -95,6 +111,36 @@ public class RetrofitRedditRepository implements RedditRepository {
                     throw new ResponseError();
                 }
                 return subreddits;
+            }
+        };
+    }
+
+    private Observable<Posts> getPostsOnline(final String subreddit) {
+        return mService.getPosts(subreddit)
+                .map(getPostsMapper())
+                .onErrorReturn(new Func1<Throwable, Posts>() {
+                    @Override
+                    public Posts call(Throwable throwable) {
+                        throw new ConnectionError(throwable);
+                    }
+                })
+                .doOnNext(new Action1<Posts>() {
+                    @Override
+                    public void call(Posts posts) {
+                        mPostsCache.put(subreddit, posts);
+                    }
+                });
+    }
+
+    private Func1<String, Posts> getPostsMapper() {
+        return new Func1<String, Posts>() {
+            @Override
+            public Posts call(String s) {
+                Posts posts = mGson.fromJson(normalizeList(s), Posts.class);
+                if (posts == null) {
+                    throw new ResponseError();
+                }
+                return posts;
             }
         };
     }
@@ -160,5 +206,7 @@ public class RetrofitRedditRepository implements RedditRepository {
     public interface Service {
         @GET("subreddits/default.json")
         Observable<String> getSubreddits();
+        @GET("r/{subreddit}.json")
+        Observable<String> getPosts(@Path("subreddit") String subreddit);
     }
 }

@@ -17,6 +17,8 @@
 package com.epishie.ripley.di;
 
 import com.epishie.ripley.BuildConfig;
+import com.epishie.ripley.feature.posts.PostsFeature;
+import com.epishie.ripley.feature.posts.PostsPresenter;
 import com.epishie.ripley.feature.shared.repository.RedditRepository;
 import com.epishie.ripley.feature.shared.repository.RetrofitRedditRepository;
 import com.epishie.ripley.feature.subreddits.SubredditsFeature;
@@ -58,5 +60,12 @@ public class AppModule {
                                                                   @Named("main") Scheduler mainScheduler,
                                                                   @Named("worker") Scheduler workerScheduler) {
         return new SubredditsPresenter(repository, mainScheduler, workerScheduler);
+    }
+
+    @Provides
+    public PostsFeature.Presenter providePostsPresenter(RedditRepository repository,
+                                                        @Named("main") Scheduler mainScheduler,
+                                                        @Named("worker") Scheduler workerScheduler) {
+        return new PostsPresenter(repository, mainScheduler, workerScheduler);
     }
 }

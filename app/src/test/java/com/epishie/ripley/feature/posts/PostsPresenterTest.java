@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.feature.subreddits;
+package com.epishie.ripley.feature.posts;
 
-import com.epishie.ripley.feature.shared.model.Subreddit;
-import com.epishie.ripley.feature.shared.model.Subreddits;
+import com.epishie.ripley.feature.shared.model.Post;
+import com.epishie.ripley.feature.shared.model.Posts;
 import com.epishie.ripley.feature.shared.repository.RedditRepository;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,41 +40,44 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SubredditsPresenterTest {
+@RunWith(RobolectricGradleTestRunner.class)
+public class PostsPresenterTest {
     @Mock
     RedditRepository mRepository;
     @Mock
-    SubredditsFeature.View mView;
+    PostsFeature.View mView;
     TestScheduler mScheduler;
-    SubredditsPresenter mPresenter;
+    PostsPresenter mPresenter;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(mView.getContext()).thenReturn(RuntimeEnvironment.application);
 
         mScheduler = new TestScheduler();
-        mPresenter = new SubredditsPresenter(mRepository, mScheduler, mScheduler);
+        mPresenter = new PostsPresenter(mRepository, mScheduler, mScheduler);
         mPresenter.setView(mView);
     }
 
     @Test
     public void testOnLoad() {
-        mockSubreddits(10);
-        mPresenter.onLoad();
+        mockPosts(10);
+        mPresenter.onLoad("gadgets");
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getSubreddits();
-        verify(mView).showSubreddits(anyListOf(SubredditViewModel.class));
+        verify(mRepository).getPosts("gadgets");
+        verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
-    private void mockSubreddits(int count) {
-        Subreddits subreddits = mock(Subreddits.class);
-        List<Subreddit> subredditList = new ArrayList<>();
+    private void mockPosts(int count) {
+        Posts posts = mock(Posts.class);
+        List<Post> children = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            Subreddit subreddit = mock(Subreddit.class);
-            when(subreddit.getUrl()).thenReturn("URL#" + i);
-            subredditList.add(subreddit);
+            Post post = mock(Post.class);
+            when(post.getTitle()).thenReturn("Title#" + i);
+            children.add(post);
         }
-        when(mRepository.getSubreddits()).thenReturn(Observable.just(subreddits));
+        when(posts.getChildren()).thenReturn(children);
+        when(mRepository.getPosts("gadgets")).thenReturn(Observable.just(posts));
     }
 }

@@ -83,6 +83,7 @@ dependencies {
     // UNIT TEST
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.robolectric:robolectric:${robolectricVersion}"
+    testCompile "org.robolectric:shadows-support-v4:${robolectricVersion}"
 
     // ASSERTIONS
     testCompile "org.assertj:assertj-core:$assertjVersion"

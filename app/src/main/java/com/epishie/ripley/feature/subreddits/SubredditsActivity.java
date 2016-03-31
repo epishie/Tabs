@@ -29,6 +29,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.epishie.ripley.App;
 import com.epishie.ripley.R;
+import com.epishie.ripley.feature.posts.PostsFragment;
+import com.epishie.ripley.feature.shared.model.Subreddit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +120,8 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
         @Override
         public Fragment getItem(int position) {
-            return new Fragment();
+            SubredditViewModel subreddit = mSubreddits.get(position);
+            return PostsFragment.createInstance(subreddit.getName());
         }
 
         @Override

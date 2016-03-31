@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.di;
+package com.epishie.ripley.feature.posts;
 
-import com.epishie.ripley.feature.posts.PostsFragment;
-import com.epishie.ripley.feature.subreddits.SubredditsActivity;
+import android.content.Context;
 
-import javax.inject.Singleton;
+import java.util.List;
 
-import dagger.Component;
-
-@Singleton
-@Component(modules = AppModule.class)
-public interface AppComponent {
-    void inject(SubredditsActivity activity);
-    void inject(PostsFragment fragment);
+public interface PostsFeature {
+    interface View {
+        void showPosts(List<PostViewModel> posts);
+        Context getContext();
+    }
+    interface Presenter {
+        void setView(View view);
+        void onLoad(String subreddit);
+    }
 }

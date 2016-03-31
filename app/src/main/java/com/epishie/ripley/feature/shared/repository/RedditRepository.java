@@ -16,10 +16,12 @@
 
 package com.epishie.ripley.feature.shared.repository;
 
+import com.epishie.ripley.feature.shared.model.Posts;
 import com.epishie.ripley.feature.shared.model.Subreddits;
 
 import rx.Observable;
 
 public interface RedditRepository {
     Observable<Subreddits> getSubreddits();
+    Observable<Posts> getPosts(String subreddit);
 }
