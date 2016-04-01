@@ -23,17 +23,20 @@ public class PostViewModel implements Parcelable {
     private final String mTitle;
     private final String mByLine;
     private final String mScore;
+    private final String mPreview;
 
     private PostViewModel(Builder builder) {
         mTitle = builder.mTitle;
         mByLine = builder.mByLine;
         mScore = builder.mScore;
+        mPreview = builder.mPreview;
     }
 
     public PostViewModel(Parcel in) {
         mTitle = in.readString();
         mByLine = in.readString();
         mScore = in.readString();
+        mPreview = in.readString();
     }
 
     public String getTitle() {
@@ -48,6 +51,10 @@ public class PostViewModel implements Parcelable {
         return mScore;
     }
 
+    public String getPreview() {
+        return mPreview;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -58,6 +65,7 @@ public class PostViewModel implements Parcelable {
         dest.writeString(mTitle);
         dest.writeString(mByLine);
         dest.writeString(mScore);
+        dest.writeString(mPreview);
     }
 
     public static final Creator<PostViewModel> CREATOR = new Creator<PostViewModel>() {
@@ -76,6 +84,7 @@ public class PostViewModel implements Parcelable {
         private String mTitle = "";
         private String mByLine = "";
         private String mScore = "";
+        private String mPreview = "";
 
         public Builder setTitle(String title) {
             if (title != null && !title.isEmpty()) {
@@ -94,6 +103,13 @@ public class PostViewModel implements Parcelable {
         public Builder setScore(String score) {
             if (score != null && !score.isEmpty()) {
                 mScore = score;
+            }
+            return this;
+        }
+
+        public Builder setPreview(String preview) {
+            if (preview != null && !preview.isEmpty()) {
+                mPreview = preview;
             }
             return this;
         }

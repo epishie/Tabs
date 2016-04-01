@@ -49,6 +49,7 @@ ext {
     okhttpVersion = '3.2.0'
     retrofitVersion = '2.0.0'
     gsonVersion = '2.6.2'
+    picassoVersion = '2.5.2'
     junitVersion = '4.12'
     assertjVersion = '1.1.1'
     robolectricVersion = '3.0'
@@ -79,6 +80,9 @@ dependencies {
 
     // JSON
     compile "com.google.code.gson:gson:${gsonVersion}"
+
+    // IMAGE
+    compile "com.squareup.picasso:picasso:${picassoVersion}"
 
     // UNIT TEST
     testCompile "junit:junit:${junitVersion}"

@@ -85,6 +85,9 @@ public class PostsPresenter implements PostsFeature.Presenter {
                             post.getCommentCount(),
                             FormatUtil.getTimeElapsed(post.getCreated() * 1000l,
                                     System.currentTimeMillis())));
+                    if (post.getPreviewImages() != null && !post.getPreviewImages().isEmpty()) {
+                        builder.setPreview(post.getPreviewImages().get(0).getUrl());
+                    }
                     mappedPosts.add(builder.build());
                 }
 

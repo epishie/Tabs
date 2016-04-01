@@ -199,8 +199,35 @@ public class RetrofitRedditRepository implements RedditRepository {
         for (Map.Entry<String, JsonElement> entry : childData.entrySet()) {
             childObject.add(entry.getKey(), entry.getValue());
         }
+        normalizePreview(childObject);
 
         return childObject;
+    }
+
+    private void normalizePreview(JsonObject jsonObject) {
+        if (!jsonObject.has("preview") || !jsonObject.get("preview").isJsonObject()) {
+            return;
+        }
+        JsonObject preview = jsonObject.getAsJsonObject("preview");
+        if (!preview.has("images") || !preview.get("images").isJsonArray()) {
+            return;
+        }
+        JsonArray previewImages = new JsonArray();
+        JsonArray images = preview.getAsJsonArray("images");
+        for (int i = 0; i < images.size(); i++) {
+            if (!images.get(i).isJsonObject()) {
+                continue;
+            }
+            JsonObject imageObject = images.get(i).getAsJsonObject();
+            if (!imageObject.has("source") && !imageObject.get("source").isJsonObject()) {
+                continue;
+            }
+            JsonObject sourceObject = imageObject.getAsJsonObject("source");
+            previewImages.add(sourceObject);
+        }
+        if (previewImages.size() > 0) {
+            jsonObject.add("preview_images", previewImages);
+        }
     }
 
     public interface Service {

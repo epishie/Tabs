@@ -16,6 +16,8 @@
 
 package com.epishie.ripley.feature.shared.model;
 
+import java.util.List;
+
 public class Post {
     String title;
     String url;
@@ -23,6 +25,7 @@ public class Post {
     int num_comments;
     int score;
     long created_utc;
+    List<Image> preview_images;
 
     public String getTitle() {
         return title;
@@ -46,5 +49,17 @@ public class Post {
 
     public long getCreated() {
         return created_utc;
+    }
+
+    public List<Image> getPreviewImages() {
+        return preview_images;
+    }
+
+    public static class Image {
+        String url;
+
+        public String getUrl() {
+            return url;
+        }
     }
 }
