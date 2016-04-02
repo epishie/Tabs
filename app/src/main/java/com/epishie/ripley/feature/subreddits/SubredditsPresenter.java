@@ -54,9 +54,9 @@ public class SubredditsPresenter implements SubredditsFeature.Presenter {
     @Override
     public void onLoad() {
         mRepository.getSubreddits()
-                .observeOn(mMainScheduler)
                 .subscribeOn(mWorkerScheduler)
                 .map(getSubredditsMapper())
+                .observeOn(mMainScheduler)
                 .subscribe(new Subscriber<List<SubredditViewModel>>() {
                     @Override
                     public void onCompleted() { }

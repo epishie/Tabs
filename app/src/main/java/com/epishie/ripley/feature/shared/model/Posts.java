@@ -29,4 +29,9 @@ public class Posts {
     public List<Post> getChildren() {
         return children;
     }
+
+    public void addPosts(Posts posts) {
+        after = posts.after;
+        children.addAll(posts.children);
+    }
 }

@@ -28,5 +28,6 @@ public interface PostsFeature {
     interface Presenter {
         void setView(View view);
         void onLoad(String subreddit);
+        void onLoadMore(String subreddit);
     }
 }

@@ -16,5 +16,14 @@
 
 package com.epishie.ripley.error;
 
-public class ResponseError extends BaseError {
+public abstract class BaseError extends RuntimeException {
+    public BaseError() { }
+
+    public BaseError(Throwable t) {
+        super(t);
+    }
+
+    public BaseError(String message, Throwable t) {
+        super(message, t);
+    }
 }

@@ -19,6 +19,7 @@ package com.epishie.ripley.feature.posts;
 import android.content.Context;
 
 import com.epishie.ripley.R;
+import com.epishie.ripley.feature.shared.repository.RedditRepository.FetchType;
 import com.epishie.ripley.util.FormatUtil;
 import com.epishie.ripley.feature.shared.model.Post;
 import com.epishie.ripley.feature.shared.model.Posts;
@@ -27,6 +28,7 @@ import com.epishie.ripley.feature.shared.repository.RedditRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -52,10 +54,18 @@ public class PostsPresenter implements PostsFeature.Presenter {
 
     @Override
     public void onLoad(String subreddit) {
-        mRepository.getPosts(subreddit)
-                .observeOn(mMainScheduler)
-                .subscribeOn(mWorkerScheduler)
+        handleResponse(mRepository.getPosts(subreddit, FetchType.NORMAL));
+    }
+
+    @Override
+    public void onLoadMore(String subreddit) {
+        handleResponse(mRepository.getPosts(subreddit, FetchType.NEXT));
+    }
+
+    private void handleResponse(Observable<Posts> observable) {
+        observable.subscribeOn(mWorkerScheduler)
                 .map(getPostsMapper())
+                .observeOn(mMainScheduler)
                 .subscribe(new Subscriber<List<PostViewModel>>() {
                     @Override
                     public void onCompleted() { }

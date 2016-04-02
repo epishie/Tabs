@@ -95,8 +95,6 @@ public class PostsFragmentTest {
         fragment.showPosts(mockPosts(10));
         RecyclerView posts = (RecyclerView) fragment.getView().findViewById(R.id.posts);
         posts.measure(0, 0);
-        posts.layout(0, 0, 100, 100000);
-
         assertThat(posts).hasChildCount(10);
     }
 

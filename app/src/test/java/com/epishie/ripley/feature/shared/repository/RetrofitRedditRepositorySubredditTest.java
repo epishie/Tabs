@@ -17,6 +17,7 @@
 package com.epishie.ripley.feature.shared.repository;
 
 import com.epishie.ripley.error.ConnectionError;
+import com.epishie.ripley.error.ResponseError;
 import com.epishie.ripley.feature.shared.model.Subreddit;
 import com.epishie.ripley.feature.shared.model.Subreddits;
 
@@ -34,7 +35,7 @@ import rx.schedulers.TestScheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RetrofitRedditRepositoryTest {
+public class RetrofitRedditRepositorySubredditTest {
     MockWebServer mServer;
     RedditRepository mRepository;
     TestScheduler mScheduler;
@@ -82,7 +83,7 @@ public class RetrofitRedditRepositoryTest {
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        subscriber.assertError(ConnectionError.class);
+        subscriber.assertError(ResponseError.class);
     }
 
     @Test

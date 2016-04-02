@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 
 import com.epishie.ripley.App;
 import com.epishie.ripley.R;
+import com.epishie.ripley.widget.InfiniteScrollListener;
 
 import java.util.List;
 
@@ -39,6 +41,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
     @Inject
     protected PostsFeature.Presenter mPresenter;
     private String mSubreddit;
+    private SwipeRefreshLayout mRefresher;
     private PostsAdapter mPostsAdapter;
 
     public static PostsFragment createInstance(@NonNull String subreddit) {
@@ -72,8 +75,18 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         super.onViewCreated(view, savedInstanceState);
         mPostsAdapter = new PostsAdapter();
         RecyclerView posts = (RecyclerView) view.findViewById(R.id.posts);
-        posts.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager lm = new LinearLayoutManager(getContext());
+        posts.setLayoutManager(lm);
         posts.setAdapter(mPostsAdapter);
+        posts.addOnScrollListener(new InfiniteScrollListener(lm) {
+            @Override
+            public void onLoadMore() {
+                mPresenter.onLoadMore(mSubreddit);
+                mRefresher.setRefreshing(true);
+            }
+        });
+
+        mRefresher = (SwipeRefreshLayout) view.findViewById(R.id.refresher);
     }
 
     @Override
@@ -82,16 +95,24 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         injectDependencies();
 
         mPresenter.setView(this);
-        mPresenter.onLoad(mSubreddit);
-    }
-
-    private void injectDependencies() {
-        App app = (App) getActivity().getApplication();
-        app.getComponent().inject(this);
+        mRefresher.post(new Runnable() {
+            @Override
+            public void run() {
+                mPresenter.onLoad(mSubreddit);
+                mRefresher.setRefreshing(true);
+            }
+        });
     }
 
     @Override
     public void showPosts(List<PostViewModel> posts) {
         mPostsAdapter.addPosts(posts);
+        mRefresher.setRefreshing(false);
+    }
+
+
+    private void injectDependencies() {
+        App app = (App) getActivity().getApplication();
+        app.getComponent().inject(this);
     }
 }

@@ -23,5 +23,11 @@ import rx.Observable;
 
 public interface RedditRepository {
     Observable<Subreddits> getSubreddits();
-    Observable<Posts> getPosts(String subreddit);
+    Observable<Posts> getPosts(String subreddit, FetchType fetchType);
+
+    enum FetchType {
+        NORMAL,
+        REFRESH,
+        NEXT
+    }
 }

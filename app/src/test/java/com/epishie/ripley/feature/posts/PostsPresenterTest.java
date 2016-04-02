@@ -19,6 +19,7 @@ package com.epishie.ripley.feature.posts;
 import com.epishie.ripley.feature.shared.model.Post;
 import com.epishie.ripley.feature.shared.model.Posts;
 import com.epishie.ripley.feature.shared.repository.RedditRepository;
+import com.epishie.ripley.feature.shared.repository.RedditRepository.FetchType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,9 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.schedulers.TestScheduler;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,7 +68,17 @@ public class PostsPresenterTest {
         mPresenter.onLoad("gadgets");
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets");
+        verify(mRepository).getPosts("gadgets", FetchType.NORMAL);
+        verify(mView).showPosts(anyListOf(PostViewModel.class));
+    }
+
+    @Test
+    public void testOnLoadMore() {
+        mockPosts(10);
+        mPresenter.onLoadMore("gadgets");
+        mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+        verify(mRepository).getPosts("gadgets", FetchType.NEXT);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
@@ -78,6 +91,6 @@ public class PostsPresenterTest {
             children.add(post);
         }
         when(posts.getChildren()).thenReturn(children);
-        when(mRepository.getPosts("gadgets")).thenReturn(Observable.just(posts));
+        when(mRepository.getPosts(eq("gadgets"), any(FetchType.class))).thenReturn(Observable.just(posts));
     }
 }

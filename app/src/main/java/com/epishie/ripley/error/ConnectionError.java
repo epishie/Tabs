@@ -16,7 +16,7 @@
 
 package com.epishie.ripley.error;
 
-public class ConnectionError extends RuntimeException {
+public class ConnectionError extends BaseError {
     public ConnectionError(Throwable t) {
        super(t);
     }
