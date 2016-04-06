@@ -62,6 +62,11 @@ public class PostsPresenter implements PostsFeature.Presenter {
         handleResponse(mRepository.getPosts(subreddit, FetchType.NEXT));
     }
 
+    @Override
+    public void onRefresh(String subreddit) {
+        handleResponse(mRepository.getPosts(subreddit, FetchType.REFRESH));
+    }
+
     private void handleResponse(Observable<Posts> observable) {
         observable.subscribeOn(mWorkerScheduler)
                 .map(getPostsMapper())

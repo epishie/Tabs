@@ -82,11 +82,17 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
             @Override
             public void onLoadMore() {
                 mPresenter.onLoadMore(mSubreddit);
-                mRefresher.setRefreshing(true);
+                mPostsAdapter.showLoader();
             }
         });
 
         mRefresher = (SwipeRefreshLayout) view.findViewById(R.id.refresher);
+        mRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.onRefresh(mSubreddit);
+            }
+        });
     }
 
     @Override
@@ -98,8 +104,8 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         mRefresher.post(new Runnable() {
             @Override
             public void run() {
-                mPresenter.onLoad(mSubreddit);
                 mRefresher.setRefreshing(true);
+                mPresenter.onLoad(mSubreddit);
             }
         });
     }
@@ -110,6 +116,14 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         mRefresher.setRefreshing(false);
     }
 
+    @Override
+    public void refresh() {
+        if (mRefresher.isRefreshing()) {
+            return;
+        }
+        mRefresher.setRefreshing(true);
+        mPresenter.onRefresh(mSubreddit);
+    }
 
     private void injectDependencies() {
         App app = (App) getActivity().getApplication();

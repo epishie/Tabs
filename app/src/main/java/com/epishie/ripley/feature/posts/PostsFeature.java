@@ -23,11 +23,13 @@ import java.util.List;
 public interface PostsFeature {
     interface View {
         void showPosts(List<PostViewModel> posts);
+        void refresh();
         Context getContext();
     }
     interface Presenter {
         void setView(View view);
         void onLoad(String subreddit);
         void onLoadMore(String subreddit);
+        void onRefresh(String subreddit);
     }
 }

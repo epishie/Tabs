@@ -25,6 +25,10 @@
     <style name="AppTheme.Post">
         <item name="android:background">?selectableItemBackground</item>
     </style>
+    <style name="AppTheme.Post.Header">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
     <style name="AppTheme.Post.Title">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
         <item name="android:textColor">?android:textColorPrimary</item>

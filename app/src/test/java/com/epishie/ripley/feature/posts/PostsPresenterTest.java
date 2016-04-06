@@ -82,6 +82,16 @@ public class PostsPresenterTest {
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
+    @Test
+    public void testOnRefresh() {
+        mockPosts(10);
+        mPresenter.onRefresh("gadgets");
+        mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+        verify(mRepository).getPosts("gadgets", FetchType.REFRESH);
+        verify(mView).showPosts(anyListOf(PostViewModel.class));
+    }
+
     private void mockPosts(int count) {
         Posts posts = mock(Posts.class);
         List<Post> children = new ArrayList<>();

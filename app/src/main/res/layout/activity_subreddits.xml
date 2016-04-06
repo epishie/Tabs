@@ -39,6 +39,7 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:tabContentStart="60dp"
                 app:tabMode="scrollable"
                 app:tabGravity="center" />
         </android.support.design.widget.AppBarLayout>

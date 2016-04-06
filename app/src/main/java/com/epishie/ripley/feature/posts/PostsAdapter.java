@@ -32,11 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_LOADING = -1;
     private static final int TYPE_POST = 0;
     private static final int TYPE_POST_PREVIEW = 1;
 
     private final List<PostViewModel> mPosts;
     private LayoutInflater mInflater;
+    private boolean mLoading;
 
     public PostsAdapter() {
         mPosts = new ArrayList<>();
@@ -50,6 +52,11 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_LOADING) {
+            return new PostLoaderViewHolder(mInflater.inflate(R.layout.item_post_loader,
+                    parent,
+                    false));
+        }
         if (viewType == TYPE_POST) {
             return new PostViewHolder(mInflater.inflate(R.layout.item_post,
                     parent,
@@ -65,7 +72,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         PostViewModel post = mPosts.get(position);
         if (holder instanceof PostPreviewViewHolder) {
             onBindViewHolder((PostPreviewViewHolder) holder, post);
-        } else {
+        } else if (holder instanceof PostViewHolder) {
             onBindViewHolder((PostViewHolder) holder, post);
         }
     }
@@ -93,6 +100,9 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
         PostViewModel post = mPosts.get(position);
+        if (post == null) {
+            return TYPE_LOADING;
+        }
         if (post.getPreview() == null || post.getPreview().isEmpty()) {
             return TYPE_POST;
         }
@@ -101,9 +111,31 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addPosts(@NonNull List<PostViewModel> posts) {
+        hideLoader();
         int index = mPosts.size();
         mPosts.addAll(posts);
         notifyItemRangeInserted(index, posts.size());
+    }
+
+    public void showLoader() {
+        if (mLoading) {
+            return;
+        }
+        mLoading = true;
+        mPosts.add(null);
+        notifyItemInserted(mPosts.size() - 1);
+    }
+
+    public void hideLoader() {
+        if (!mLoading || mPosts.isEmpty()) {
+            return;
+        }
+        mLoading = false;
+        int last = mPosts.size() - 1;
+        if (mPosts.get(last) == null) {
+            mPosts.remove(last);
+            notifyItemRemoved(last);
+        }
     }
 
     protected static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -129,6 +161,12 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mByLine = (TextView) itemView.findViewById(R.id.post_by_line);
             mScore = (TextView) itemView.findViewById(R.id.post_score);
             mPreview = (ImageView) itemView.findViewById(R.id.post_preview);
+        }
+    }
+
+    protected static class PostLoaderViewHolder extends RecyclerView.ViewHolder {
+        public PostLoaderViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

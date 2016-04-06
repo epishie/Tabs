@@ -21,17 +21,22 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.epishie.ripley.App;
 import com.epishie.ripley.R;
 import com.epishie.ripley.feature.posts.PostsFragment;
-import com.epishie.ripley.feature.shared.model.Subreddit;
+import com.epishie.ripley.feature.shared.model.Post;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +66,24 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.subreddits, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.refresh) {
+            PostsFragment fragment = mAdapter.getFragment(mPages.getCurrentItem());
+            if (fragment != null) {
+                fragment.refresh();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
@@ -75,6 +98,11 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mAdapter.saveState(outState);
+    }
+
+    @Override
+    public void showSubreddits(List<SubredditViewModel> subreddits) {
+        mAdapter.addSubreddits(subreddits);
     }
 
     private void injectDependencies() {
@@ -97,6 +125,10 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
     private void setupView() {
         mPresenter.setView(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         mAdapter = new SubredditsAdapter(getSupportFragmentManager());
         mPages = (ViewPager) findViewById(R.id.pages);
         mPages.setAdapter(mAdapter);
@@ -104,18 +136,15 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         tabs.setupWithViewPager(mPages);
     }
 
-    @Override
-    public void showSubreddits(List<SubredditViewModel> subreddits) {
-        mAdapter.addSubreddits(subreddits);
-    }
-
     private static class SubredditsAdapter extends FragmentStatePagerAdapter {
         private static final String STATE_SUBREDDITS = SubredditsAdapter.class.getName() + ".STATE_SUBREDDITS";
         private final List<SubredditViewModel> mSubreddits;
+        private final SparseArrayCompat<WeakReference<PostsFragment>> mFragments;
 
         public SubredditsAdapter(FragmentManager fm) {
             super(fm);
             mSubreddits = new ArrayList<>();
+            mFragments = new SparseArrayCompat<>();
         }
 
         @Override
@@ -135,9 +164,27 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
             return mSubreddits.size();
         }
 
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            PostsFragment fragment = (PostsFragment) super.instantiateItem(container, position);
+            mFragments.put(position, new WeakReference<>(fragment));
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            mFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
         public void addSubreddits(List<SubredditViewModel> subreddits) {
             mSubreddits.addAll(subreddits);
             notifyDataSetChanged();
+        }
+
+        public PostsFragment getFragment(int position) {
+            WeakReference<PostsFragment> fragmentRef = mFragments.get(position);
+            return fragmentRef == null ? null : fragmentRef.get();
         }
 
         public void saveState(Bundle outState)  {
