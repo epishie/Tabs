@@ -48,6 +48,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     private ActionBarDrawerToggle mDrawerToggle;
     private SubredditsAdapter mAdapter;
     private ViewPager mPages;
+    private TabLayout mTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +91,6 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mAdapter.saveState(outState);
@@ -132,8 +128,27 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         mAdapter = new SubredditsAdapter(getSupportFragmentManager());
         mPages = (ViewPager) findViewById(R.id.pages);
         mPages.setAdapter(mAdapter);
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(mPages);
+        mTabs = (TabLayout) findViewById(R.id.tabs);
+        mPages.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
+        mTabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (mPages.getCurrentItem() != tab.getPosition()) {
+                    mPages.setCurrentItem(tab.getPosition(), true);
+                }
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // No-op
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // No-op
+            }
+        });
     }
 
     private static class SubredditsAdapter extends FragmentStatePagerAdapter {
