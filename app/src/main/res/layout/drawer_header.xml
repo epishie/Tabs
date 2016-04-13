@@ -15,15 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="white">#FFFFFF</color>
-    <color name="grey_700">#616161</color>
-    <color name="grey_300">#E0E0E0</color>
-    <color name="grey_600">#757575</color>
-    <color name="grey_900">#212121</color>
-    <color name="blue_grey_500">#607D8B</color>
-    <color name="black_alpha_54">#8A000000</color>
-
-    <!-- SPECIAL -->
-    <color name="control_normal">@color/black_alpha_54</color>
-</resources>
+<android.support.percent.PercentFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/control_normal">
+    <android.support.v4.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_widthPercent="100%"
+        app:layout_aspectRatio="178%"/>
+</android.support.percent.PercentFrameLayout>

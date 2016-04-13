@@ -15,7 +15,24 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Gson
+-keep class sun.misc.Unsafe { *; }
+-keep class com.epishie.ripley.** { *; }
+
+# Retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
+
+# Rxjava
+-dontwarn rx.internal.util.**
+
+# Picasso/okhttp
+-dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
+
+# Others
+-dontobfuscate
+-dontwarn okio.**
 -keepattributes Signature
 -keepattributes Exceptions
