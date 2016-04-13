@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId "com.epishie.ripley"
-        minSdkVersion 9
+        minSdkVersion 11
         targetSdkVersion 23
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
