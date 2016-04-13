@@ -23,4 +23,29 @@
         android:title="@string/lbl_refresh"
         android:icon="@drawable/ic_refresh_ctl_24dp"
         app:showAsAction="always" />
+    <item
+        android:title="@string/lbl_sort"
+        android:icon="@drawable/ic_sort_ctl_24dp"
+        app:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single"
+                android:id="@+id/sort">
+                <item
+                    android:id="@+id/sort_hot"
+                    android:title="@string/lbl_hot" />
+                <item
+                    android:id="@+id/sort_new"
+                    android:title="@string/lbl_new" />
+                <item
+                    android:id="@+id/sort_rising"
+                    android:title="@string/lbl_rising" />
+                <item
+                    android:id="@+id/sort_controversial"
+                    android:title="@string/lbl_controversial" />
+                <item
+                    android:id="@+id/sort_top"
+                    android:title="@string/lbl_top" />
+            </group>
+        </menu>
+    </item>
 </menu>

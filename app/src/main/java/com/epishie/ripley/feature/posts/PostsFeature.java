@@ -18,6 +18,8 @@ package com.epishie.ripley.feature.posts;
 
 import android.content.Context;
 
+import com.epishie.ripley.feature.shared.model.Sort;
+
 import java.util.List;
 
 public interface PostsFeature {
@@ -28,8 +30,8 @@ public interface PostsFeature {
     }
     interface Presenter {
         void setView(View view);
-        void onLoad(String subreddit);
-        void onLoadMore(String subreddit);
-        void onRefresh(String subreddit);
+        void onLoad(String subreddit, Sort sort);
+        void onLoadMore(String subreddit, Sort sort);
+        void onRefresh(String subreddit, Sort sort);
     }
 }

@@ -21,6 +21,7 @@
     <string name="lbl_default_subreddits">Default</string>
     <string name="lbl_post_by_line">%1$s \u2022 %2$d comments \u2022 %3$s ago</string>
     <string name="lbl_refresh">Refresh</string>
+    <string name="lbl_sort">Sort</string>
     <string name="lbl_hot">Hot</string>
     <string name="lbl_new">New</string>
     <string name="lbl_rising">Rising</string>

@@ -24,6 +24,7 @@ import com.epishie.ripley.R;
 import com.epishie.ripley.di.AppComponent;
 import com.epishie.ripley.di.AppModule;
 import com.epishie.ripley.di.DaggerAppComponent;
+import com.epishie.ripley.feature.shared.model.Sort;
 import com.epishie.ripley.feature.shared.repository.RedditRepository;
 
 import org.junit.Before;
@@ -68,10 +69,13 @@ public class PostsFragmentTest {
 
     @Test
     public void testCreateInstance() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets");
+        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.RISING);
         assertThat(fragment.getArguments()).hasKey(PostsFragment.PARAM_SUBREDDIT);
         assertThat(fragment.getArguments().getString(PostsFragment.PARAM_SUBREDDIT))
                 .isEqualTo("gadgets");
+        assertThat(fragment.getArguments()).hasKey(PostsFragment.PARAM_SORT);
+        assertThat(fragment.getArguments().getInt(PostsFragment.PARAM_SORT))
+                .isEqualTo(Sort.RISING.ordinal());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -81,16 +85,16 @@ public class PostsFragmentTest {
 
     @Test
     public void testOnCreate() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets");
+        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.HOT);
         startVisibleFragment(fragment);
 
         verify(mPresenter).setView(fragment);
-        verify(mPresenter).onLoad("gadgets");
+        verify(mPresenter).onLoad("gadgets", Sort.HOT);
     }
 
     @Test
     public void testShowPosts() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets");
+        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.HOT);
         startVisibleFragment(fragment);
         fragment.showPosts(mockPosts(10));
         RecyclerView posts = (RecyclerView) fragment.getView().findViewById(R.id.posts);

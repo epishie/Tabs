@@ -19,6 +19,7 @@ package com.epishie.ripley.feature.posts;
 import android.content.Context;
 
 import com.epishie.ripley.R;
+import com.epishie.ripley.feature.shared.model.Sort;
 import com.epishie.ripley.feature.shared.repository.RedditRepository.FetchType;
 import com.epishie.ripley.util.FormatUtil;
 import com.epishie.ripley.feature.shared.model.Post;
@@ -53,18 +54,18 @@ public class PostsPresenter implements PostsFeature.Presenter {
     }
 
     @Override
-    public void onLoad(String subreddit) {
-        handleResponse(mRepository.getPosts(subreddit, FetchType.NORMAL));
+    public void onLoad(String subreddit, Sort sort) {
+        handleResponse(mRepository.getPosts(subreddit, sort, FetchType.NORMAL));
     }
 
     @Override
-    public void onLoadMore(String subreddit) {
-        handleResponse(mRepository.getPosts(subreddit, FetchType.NEXT));
+    public void onLoadMore(String subreddit, Sort sort) {
+        handleResponse(mRepository.getPosts(subreddit, sort, FetchType.NEXT));
     }
 
     @Override
-    public void onRefresh(String subreddit) {
-        handleResponse(mRepository.getPosts(subreddit, FetchType.REFRESH));
+    public void onRefresh(String subreddit, Sort sort) {
+        handleResponse(mRepository.getPosts(subreddit, sort, FetchType.REFRESH));
     }
 
     private void handleResponse(Observable<Posts> observable) {

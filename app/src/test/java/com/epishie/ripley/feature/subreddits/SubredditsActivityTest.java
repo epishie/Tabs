@@ -16,6 +16,7 @@
 
 package com.epishie.ripley.feature.subreddits;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 
 import com.epishie.ripley.App;
@@ -43,6 +44,7 @@ import javax.inject.Named;
 
 import rx.Scheduler;
 
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,7 +68,7 @@ public class SubredditsActivityTest {
 
     @Test
     public void testOnCreate() {
-        SubredditsActivity activity = mController.create().get();
+        SubredditsActivity activity = mController.create().postCreate(null).start().resume().visible().get();
 
         verify(mPresenter).setView(activity);
         verify(mPresenter).onLoad();
@@ -80,6 +82,20 @@ public class SubredditsActivityTest {
 
         Assertions.assertThat(tabs).hasTabCount(10);
     }
+
+    @Test
+    public void testRestart() {
+        SubredditsActivity activity = mController.create().get();
+        activity.showSubreddits(mockSubreddits(10));
+        Bundle state = new Bundle();
+        mController.saveInstanceState(state).stop().destroy();
+        mController = Robolectric.buildActivity(SubredditsActivity.class);
+        activity = mController.create(state).get();
+        TabLayout tabs = (TabLayout) activity.findViewById(R.id.tabs);
+
+        Assertions.assertThat(tabs).hasTabCount(10);
+    }
+
 
     private List<SubredditViewModel> mockSubreddits(int count) {
         List<SubredditViewModel> subreddits = new ArrayList<>();

@@ -18,6 +18,7 @@ package com.epishie.ripley.feature.posts;
 
 import com.epishie.ripley.feature.shared.model.Post;
 import com.epishie.ripley.feature.shared.model.Posts;
+import com.epishie.ripley.feature.shared.model.Sort;
 import com.epishie.ripley.feature.shared.repository.RedditRepository;
 import com.epishie.ripley.feature.shared.repository.RedditRepository.FetchType;
 
@@ -65,30 +66,30 @@ public class PostsPresenterTest {
     @Test
     public void testOnLoad() {
         mockPosts(10);
-        mPresenter.onLoad("gadgets");
+        mPresenter.onLoad("gadgets", Sort.HOT);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", FetchType.NORMAL);
+        verify(mRepository).getPosts("gadgets", Sort.HOT, FetchType.NORMAL);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
     @Test
     public void testOnLoadMore() {
         mockPosts(10);
-        mPresenter.onLoadMore("gadgets");
+        mPresenter.onLoadMore("gadgets", Sort.NEW);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", FetchType.NEXT);
+        verify(mRepository).getPosts("gadgets", Sort.NEW, FetchType.NEXT);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
     @Test
     public void testOnRefresh() {
         mockPosts(10);
-        mPresenter.onRefresh("gadgets");
+        mPresenter.onRefresh("gadgets", Sort.RISING);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", FetchType.REFRESH);
+        verify(mRepository).getPosts("gadgets", Sort.RISING, FetchType.REFRESH);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
@@ -101,6 +102,6 @@ public class PostsPresenterTest {
             children.add(post);
         }
         when(posts.getChildren()).thenReturn(children);
-        when(mRepository.getPosts(eq("gadgets"), any(FetchType.class))).thenReturn(Observable.just(posts));
+        when(mRepository.getPosts(eq("gadgets"), any(Sort.class), any(FetchType.class))).thenReturn(Observable.just(posts));
     }
 }

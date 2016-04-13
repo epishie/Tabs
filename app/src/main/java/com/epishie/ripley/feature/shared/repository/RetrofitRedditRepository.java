@@ -18,9 +18,11 @@ package com.epishie.ripley.feature.shared.repository;
 
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.LruCache;
+import android.support.v4.util.Pair;
 
 import com.epishie.ripley.error.*;
 import com.epishie.ripley.feature.shared.model.Posts;
+import com.epishie.ripley.feature.shared.model.Sort;
 import com.epishie.ripley.feature.shared.model.Subreddits;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +33,8 @@ import com.google.gson.JsonParser;
 
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -46,11 +50,17 @@ public class RetrofitRedditRepository implements RedditRepository {
     private final Gson mGson;
 
     private final LruCache<String, Subreddits> mSubredditsCache;
-    private final LruCache<String, Posts> mPostsCache;
+    private final LruCache<Pair<String, Sort>, Posts> mPostsCache;
 
     public RetrofitRedditRepository(String baseUrl) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
+                .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
@@ -74,15 +84,16 @@ public class RetrofitRedditRepository implements RedditRepository {
     }
 
     @Override
-    public Observable<Posts> getPosts(String subreddit, FetchType fetchType) {
+    public Observable<Posts> getPosts(String subreddit, Sort sort, FetchType fetchType) {
         Posts cached = null;
+        Pair<String, Sort> key = Pair.create(subreddit, sort);
         if (fetchType == FetchType.REFRESH) {
-            mPostsCache.remove(subreddit);
+            mPostsCache.remove(key);
         } else if (fetchType == FetchType.NEXT) {
-            cached = mPostsCache.remove(subreddit);
+            cached = mPostsCache.remove(key);
         }
-        return Observable.concat(Observable.just(mPostsCache.get(subreddit)),
-                getPostsOnline(subreddit, cached))
+        return Observable.concat(Observable.just(mPostsCache.get(key)),
+                getPostsOnline(subreddit, sort, cached))
                 .first(new Func1<Posts, Boolean>() {
                     @Override
                     public Boolean call(Posts posts) {
@@ -124,12 +135,12 @@ public class RetrofitRedditRepository implements RedditRepository {
         };
     }
 
-    private Observable<Posts> getPostsOnline(final String subreddit, final Posts cached) {
+    private Observable<Posts> getPostsOnline(final String subreddit, final Sort sort, final Posts cached) {
         String after = null;
         if (cached != null) {
             after = cached.getAfter();
         }
-        return mService.getPosts(subreddit, after)
+        return mService.getPosts(subreddit, sort.toString(), after)
                 .map(getPostsMapper())
                 .onErrorReturn(new Func1<Throwable, Posts>() {
                     @Override
@@ -143,11 +154,12 @@ public class RetrofitRedditRepository implements RedditRepository {
                 .doOnNext(new Action1<Posts>() {
                     @Override
                     public void call(Posts posts) {
+                        Pair<String, Sort> key = Pair.create(subreddit, sort);
                         if (cached != null) {
                             cached.addPosts(posts);
-                            mPostsCache.put(subreddit, posts);
+                            mPostsCache.put(key, posts);
                         } else {
-                            mPostsCache.put(subreddit, posts);
+                            mPostsCache.put(key, posts);
                         }
                     }
                 });
@@ -254,8 +266,9 @@ public class RetrofitRedditRepository implements RedditRepository {
     public interface Service {
         @GET("subreddits/default.json")
         Observable<String> getSubreddits();
-        @GET("r/{subreddit}.json")
+        @GET("r/{subreddit}/{sort}.json")
         Observable<String> getPosts(@Path("subreddit") String subreddit,
+                                    @Path("sort") String sort,
                                     @Query("after") String after);
     }
 }

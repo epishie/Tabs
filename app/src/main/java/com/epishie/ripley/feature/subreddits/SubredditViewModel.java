@@ -19,6 +19,8 @@ package com.epishie.ripley.feature.subreddits;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.epishie.ripley.feature.shared.model.Sort;
+
 public class SubredditViewModel implements Parcelable {
     private final String mName;
 

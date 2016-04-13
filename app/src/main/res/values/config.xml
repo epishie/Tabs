@@ -15,17 +15,19 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="48dp">
-    <TextView
-        android:id="@+id/sort_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_gravity="center_vertical"
-        style="@style/AppTheme.Post.Header"
-        tools:text="Controversial" />
-</FrameLayout>
+<resources>
+    <array name="sort">
+        <item>@id/sort_hot</item>
+        <item>@id/sort_new</item>
+        <item>@id/sort_rising</item>
+        <item>@id/sort_controversial</item>
+        <item>@id/sort_top</item>
+    </array>
+    <string-array name="sort_names">
+        <item>@string/lbl_hot</item>
+        <item>@string/lbl_new</item>
+        <item>@string/lbl_rising</item>
+        <item>@string/lbl_controversial</item>
+        <item>@string/lbl_top</item>
+    </string-array>
+</resources>

@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.epishie.ripley.feature.shared.repository;
+package com.epishie.ripley.feature.shared.model;
 
-import com.epishie.ripley.feature.shared.model.Posts;
-import com.epishie.ripley.feature.shared.model.Sort;
-import com.epishie.ripley.feature.shared.model.Subreddits;
+public enum Sort {
+    HOT("hot"),
+    NEW("new"),
+    RISING("rising"),
+    CONTROVERSIAL("controversial"),
+    TOP("top");
+    private final String mSort;
 
-import rx.Observable;
+    Sort(String sort) {
+        mSort = sort;
+    }
 
-public interface RedditRepository {
-    Observable<Subreddits> getSubreddits();
-    Observable<Posts> getPosts(String subreddit, Sort sort, FetchType fetchType);
-
-    enum FetchType {
-        NORMAL,
-        REFRESH,
-        NEXT
+    @Override
+    public String toString() {
+        return mSort;
     }
 }

@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 
 import com.epishie.ripley.App;
 import com.epishie.ripley.R;
+import com.epishie.ripley.feature.shared.model.Sort;
 import com.epishie.ripley.widget.InfiniteScrollListener;
 
 import java.util.List;
@@ -38,16 +39,20 @@ import javax.inject.Inject;
 
 public class PostsFragment extends Fragment implements PostsFeature.View {
     public static final String PARAM_SUBREDDIT = PostsFragment.class.getName() + ".PARAM_SUBREDDIT";
+    public static final String PARAM_SORT = PostsFragment.class.getName() + ".PARAM_SORT";
+
     @Inject
     protected PostsFeature.Presenter mPresenter;
     private String mSubreddit;
+    private Sort mSort;
     private SwipeRefreshLayout mRefresher;
     private PostsAdapter mPostsAdapter;
 
-    public static PostsFragment createInstance(@NonNull String subreddit) {
+    public static PostsFragment createInstance(@NonNull String subreddit, @NonNull Sort sort) {
         PostsFragment fragment = new PostsFragment();
         Bundle args = new Bundle();
         args.putString(PARAM_SUBREDDIT, subreddit);
+        args.putInt(PARAM_SORT, sort.ordinal());
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,6 +67,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         }
 
         mSubreddit = getArguments().getString(PARAM_SUBREDDIT);
+        mSort = Sort.values()[getArguments().getInt(PARAM_SORT, 0)];
     }
 
     @Nullable
@@ -81,7 +87,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         posts.addOnScrollListener(new InfiniteScrollListener(lm) {
             @Override
             public void onLoadMore() {
-                mPresenter.onLoadMore(mSubreddit);
+                mPresenter.onLoadMore(mSubreddit, mSort);
                 mPostsAdapter.showLoader();
             }
         });
@@ -90,7 +96,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
         mRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.onRefresh(mSubreddit);
+                mPresenter.onRefresh(mSubreddit, mSort);
             }
         });
     }
@@ -105,7 +111,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
             @Override
             public void run() {
                 mRefresher.setRefreshing(true);
-                mPresenter.onLoad(mSubreddit);
+                mPresenter.onLoad(mSubreddit, mSort);
             }
         });
     }
@@ -122,7 +128,7 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
             return;
         }
         mRefresher.setRefreshing(true);
-        mPresenter.onRefresh(mSubreddit);
+        mPresenter.onRefresh(mSubreddit, mSort);
     }
 
     private void injectDependencies() {

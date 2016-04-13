@@ -69,9 +69,10 @@ public class SubredditsPresenterTest {
         List<Subreddit> subredditList = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
             Subreddit subreddit = mock(Subreddit.class);
-            when(subreddit.getUrl()).thenReturn("URL#" + i);
+            when(subreddit.getUrl()).thenReturn("/r/URL" + i + "/");
             subredditList.add(subreddit);
         }
+        when(subreddits.getChildren()).thenReturn(subredditList);
         when(mRepository.getSubreddits()).thenReturn(Observable.just(subreddits));
     }
 }
