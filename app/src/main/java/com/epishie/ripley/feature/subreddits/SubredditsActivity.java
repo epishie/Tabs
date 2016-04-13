@@ -146,19 +146,16 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 drawer,
                 toolbar,
                 R.string.des_drawer_open,
                 R.string.des_drawer_close);
+        drawer.addDrawerListener(mDrawerToggle);
     }
 
     private void setupView() {
         mPresenter.setView(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         mAdapter = new SubredditsAdapter(getSupportFragmentManager());
         mPages = (ViewPager) findViewById(R.id.pages);
