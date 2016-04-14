@@ -1,0 +1,4 @@
+keyStore=release.keystore
+keyStorePassword=password
+keyAlias=alias
+keyAliasPassword=password

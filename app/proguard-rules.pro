@@ -18,7 +18,7 @@
 
 # Gson
 -keep class sun.misc.Unsafe { *; }
--keep class com.epishie.ripley.** { *; }
+-keep class com.epishie.ripley.feature.shared.model.** { *; }
 
 # Retrofit
 -dontwarn retrofit2.**
@@ -26,13 +26,20 @@
 
 # Rxjava
 -dontwarn rx.internal.util.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    long producerNode;
+    long consumerNode;
+}
 
 # Picasso/okhttp
 -dontwarn com.squareup.okhttp.**
 -dontwarn okhttp3.**
 
 # Others
--dontobfuscate
 -dontwarn okio.**
 -keepattributes Signature
 -keepattributes Exceptions

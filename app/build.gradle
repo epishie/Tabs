@@ -33,9 +33,13 @@ android {
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         buildConfigField "String", "BASE_URL", "\"http://reddit.com\""
     }
+    signingConfigs {
+        release
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.release
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -111,3 +115,10 @@ dependencies {
     // MOCKS
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
 }
+
+def props = new Properties()
+props.load(new FileInputStream(rootProject.file("release.properties")))
+android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
+android.signingConfigs.release.storePassword props.keyStorePassword
+android.signingConfigs.release.keyAlias props.keyAlias
+android.signingConfigs.release.keyPassword props.keyAliasPassword

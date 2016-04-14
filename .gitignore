@@ -22,4 +22,5 @@ obj
 jniLibs
 build
 local.properties
+release.properties
 reports
