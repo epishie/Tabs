@@ -82,7 +82,7 @@ public class SubredditsPresenter implements SubredditsFeature.Presenter {
                     if (urlMatcher.find()) {
                         name = urlMatcher.group(1);
                     }
-                    mappedSubreddits.add(new SubredditViewModel(name));
+                    mappedSubreddits.add(new SubredditViewModel(name, subreddit.getDescriptionHtml()));
                 }
                 return mappedSubreddits;
             }

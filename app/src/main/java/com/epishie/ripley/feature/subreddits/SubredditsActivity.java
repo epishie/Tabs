@@ -22,16 +22,20 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.util.SparseArrayCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 
 import com.epishie.ripley.App;
 import com.epishie.ripley.R;
@@ -56,10 +60,12 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
     @Inject
     protected SubredditsFeature.Presenter mPresenter;
+    private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private SubredditsAdapter mAdapter;
     private ViewPager mPages;
     private TabLayout mTabs;
+    private WebView mSidebar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +94,17 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        MenuItem sidebar = menu.findItem(R.id.sidebar);
+        MenuItem sortGroup = menu.findItem(R.id.sort);
         SubredditViewModel subreddit = mAdapter.getSubreddit(mPages.getCurrentItem());
         if (subreddit != null) {
+            sortGroup.setVisible(true);
+            sortGroup.setVisible(true);
             MenuItem sortItem = menu.findItem(SORT_OPTIONS.get(mAdapter.getSort().ordinal()).first);
             sortItem.setChecked(true);
+        } else {
+            sidebar.setVisible(false);
+            sortGroup.setVisible(false);
         }
 
         return true;
@@ -99,7 +112,10 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.refresh) {
+        if (item.getItemId() == R.id.sidebar) {
+            mDrawer.openDrawer(GravityCompat.END);
+            return true;
+        } else if (item.getItemId() == R.id.refresh) {
             PostsFragment fragment = mAdapter.getFragment(mPages.getCurrentItem());
             if (fragment != null) {
                 fragment.refresh();
@@ -114,8 +130,11 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
                     break;
                 }
             }
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+
+        return true;
     }
 
     @Override
@@ -131,9 +150,21 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     }
 
     @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        } else if (mDrawer.isDrawerOpen(GravityCompat.END)) {
+            mDrawer.closeDrawer(GravityCompat.END);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void showSubreddits(List<SubredditViewModel> subreddits) {
         mAdapter.addSubreddits(subreddits);
         invalidateOptionsMenu();
+        updateSidebar();
     }
 
     private void injectDependencies() {
@@ -143,15 +174,17 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
     private void setupDrawer() {
         setTitle("");
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerToggle = new ActionBarDrawerToggle(this,
-                drawer,
+                mDrawer,
                 toolbar,
                 R.string.des_drawer_open,
                 R.string.des_drawer_close);
-        drawer.addDrawerListener(mDrawerToggle);
+        mDrawer.addDrawerListener(mDrawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     private void setupView() {
@@ -169,6 +202,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
                     mPages.setCurrentItem(tab.getPosition(), true);
                 }
                 invalidateOptionsMenu();
+                updateSidebar();
             }
 
             @Override
@@ -194,6 +228,23 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
                 }
             }
         });
+
+        mSidebar = (WebView) findViewById(R.id.sidebar);
+    }
+
+    private void updateSidebar() {
+        SubredditViewModel subreddit = mAdapter.getSubreddit(mPages.getCurrentItem());
+        if (subreddit == null) {
+            return;
+        }
+        String formatted = getResources().getString(R.string.html_sidebar,
+                Integer.toHexString(ContextCompat.getColor(this, R.color.blue_grey_500)).substring(2),
+                Html.fromHtml(subreddit.getSidebar()));
+        mSidebar.loadDataWithBaseURL(null,
+                formatted,
+                "text/html",
+                "UTF-8",
+                null);
     }
 
     private static class SubredditsAdapter extends FragmentStatePagerAdapter {

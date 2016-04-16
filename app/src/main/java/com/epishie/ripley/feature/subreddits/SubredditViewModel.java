@@ -19,21 +19,26 @@ package com.epishie.ripley.feature.subreddits;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.epishie.ripley.feature.shared.model.Sort;
-
 public class SubredditViewModel implements Parcelable {
     private final String mName;
+    private final String mSidebar;
 
-    public SubredditViewModel(String name) {
+    public SubredditViewModel(String name, String sidebar) {
         mName = name;
+        mSidebar = sidebar;
     }
 
     public SubredditViewModel(Parcel in) {
         mName = in.readString();
+        mSidebar = in.readString();
     }
 
     public String getName() {
         return mName;
+    }
+
+    public String getSidebar() {
+        return mSidebar;
     }
 
     @Override
@@ -44,6 +49,7 @@ public class SubredditViewModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mName);
+        dest.writeString(mSidebar);
     }
 
     public static final Creator<SubredditViewModel> CREATOR = new Creator<SubredditViewModel>() {

@@ -18,8 +18,13 @@ package com.epishie.ripley.feature.shared.model;
 
 public class Subreddit {
     String url;
+    String description_html;
 
     public String getUrl() {
         return url;
+    }
+
+    public String getDescriptionHtml() {
+        return description_html;
     }
 }

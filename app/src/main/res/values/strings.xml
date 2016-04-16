@@ -27,6 +27,7 @@
     <string name="lbl_rising">Rising</string>
     <string name="lbl_controversial">Controversial</string>
     <string name="lbl_top">Top</string>
+    <string name="lbl_sidebar">Sidebar</string>
 
     <string name="des_drawer_open">Drawer open</string>
     <string name="des_drawer_close">Drawer close</string>
