@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.epishie.tabs.feature.subreddits.SubredditsActivity"
-            android:screenOrientation="sensor">
+            android:screenOrientation="user">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN" />
