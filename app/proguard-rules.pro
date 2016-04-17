@@ -18,7 +18,7 @@
 
 # Gson
 -keep class sun.misc.Unsafe { *; }
--keep class com.epishie.ripley.feature.shared.model.** { *; }
+-keep class com.epishie.tabs.feature.shared.model.** { *; }
 
 # Retrofit
 -dontwarn retrofit2.**

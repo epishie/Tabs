@@ -15,18 +15,18 @@
   -->
 
 <manifest
-    package="com.epishie.ripley"
+    package="com.epishie.tabs"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name=".App"
+        android:name="com.epishie.tabs.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".feature.subreddits.SubredditsActivity"
+            android:name="com.epishie.tabs.feature.subreddits.SubredditsActivity"
             android:screenOrientation="sensor">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />

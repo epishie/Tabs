@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">Ripley</string>
+    <string name="app_name">Tabs for Reddit</string>
 
     <string name="lbl_subreddits">Subreddits</string>
     <string name="lbl_default_subreddits">Default</string>

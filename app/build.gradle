@@ -15,8 +15,8 @@
  */
 
 def versionMajor = 0
-def versionMinor = 1
-def versionPatch = 0
+def versionMinor = 0
+def versionPatch = 1
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
@@ -26,7 +26,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.epishie.ripley"
+        applicationId "com.epishie.tabs"
         minSdkVersion 11
         targetSdkVersion 23
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
