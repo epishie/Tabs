@@ -22,7 +22,8 @@
     </style>
     <style name="AppTheme" parent="BaseTheme" />
     <!-- Posts -->
-    <style name="AppTheme.Post">
+    <style name="AppTheme.Post" />
+    <style name="AppTheme.Post.Container">
         <item name="android:background">?selectableItemBackground</item>
     </style>
     <style name="AppTheme.Post.Header">
