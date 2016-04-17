@@ -41,6 +41,7 @@ import com.epishie.tabs.App;
 import com.epishie.tabs.R;
 import com.epishie.tabs.feature.posts.PostsFragment;
 import com.epishie.tabs.feature.shared.model.Sort;
+import com.epishie.tabs.util.AppManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -70,6 +71,8 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.checkUpdates(this);
+
         injectDependencies();
 
         setContentView(R.layout.activity_subreddits);
@@ -82,6 +85,12 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
             mAdapter.restoreState(savedInstanceState);
         }
         getSupportActionBar().setTitle(SORT_OPTIONS.get(mAdapter.getSort().ordinal()).second);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppManager.checkCrashes(this);
     }
 
     @Override
@@ -147,6 +156,18 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mAdapter.saveState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        AppManager.tearDownCrashes(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppManager.tearDownUpdates(this);
+        super.onDestroy();
     }
 
     @Override

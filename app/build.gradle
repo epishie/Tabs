@@ -21,12 +21,14 @@ def versionPatch = 1
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
+def secret = new Properties()
+secret.load(new FileInputStream(rootProject.file("secret.properties")))
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.epishie.tabs"
         minSdkVersion 11
         targetSdkVersion 23
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
@@ -34,13 +36,28 @@ android {
         buildConfigField "String", "BASE_URL", "\"http://reddit.com\""
     }
     signingConfigs {
-        release
+        release {
+            storeFile rootProject.file(secret.keyStore)
+            storePassword secret.keyStorePassword
+            keyAlias secret.keyAlias
+            keyPassword secret.keyAliasPassword
+        }
     }
     buildTypes {
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        alpha {
+            applicationId "com.epishie.tabs.alpha"
+            manifestPlaceholders = [HOCKEYAPP_APP_ID: secret.hockeyAppId]
+        }
+        production {
+            applicationId "com.epishie.tabs"
+            manifestPlaceholders = [HOCKEYAPP_APP_ID: ""]
         }
     }
 }
@@ -58,6 +75,7 @@ ext {
     assertjVersion = '1.1.1'
     robolectricVersion = '3.0'
     mockitoVersion = '1.10.19'
+    hockeyVersion = '3.7.2'
 }
 
 dependencies {
@@ -114,11 +132,7 @@ dependencies {
 
     // MOCKS
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
-}
 
-def props = new Properties()
-props.load(new FileInputStream(rootProject.file("release.properties")))
-android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
-android.signingConfigs.release.storePassword props.keyStorePassword
-android.signingConfigs.release.keyAlias props.keyAlias
-android.signingConfigs.release.keyPassword props.keyAliasPassword
+    // TEST
+    alphaCompile "net.hockeyapp.android:HockeySDK:${hockeyVersion}"
+}
