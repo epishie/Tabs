@@ -33,7 +33,9 @@ android {
         targetSdkVersion 23
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-        buildConfigField "String", "BASE_URL", "\"http://reddit.com\""
+        buildConfigField "String", "BASE_URL", "\"https://oauth.reddit.com\""
+        buildConfigField "String", "TOKEN_URL", "\"https://www.reddit.com\""
+        buildConfigField "String", "OAUTH_CLIENT_ID", "\"${secret.redditClientId}\""
     }
     signingConfigs {
         release {
@@ -52,7 +54,7 @@ android {
     }
     productFlavors {
         alpha {
-            applicationId "com.epishie.tabs.alpha"
+            applicationId "com.epishie.tabs"
             manifestPlaceholders = [HOCKEYAPP_APP_ID: secret.hockeyAppId]
         }
         production {
@@ -97,6 +99,7 @@ dependencies {
     // RETROFIT
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
     testCompile "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"

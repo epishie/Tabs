@@ -16,6 +16,7 @@
 
 package com.epishie.tabs.feature.subreddits;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 
@@ -109,6 +110,10 @@ public class SubredditsActivityTest {
     }
 
     private class MockModule extends AppModule {
+        public MockModule() {
+            super(RuntimeEnvironment.application);
+        }
+
         @Override
         public SubredditsFeature.Presenter provideSubredditsPresenter(RedditRepository repository,
                                                                       @Named("main") Scheduler mainScheduler,

@@ -20,6 +20,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 
+import com.epishie.tabs.BuildConfig;
 import com.epishie.tabs.error.*;
 import com.epishie.tabs.feature.shared.model.Posts;
 import com.epishie.tabs.feature.shared.model.Sort;
@@ -31,9 +32,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.Map;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -48,15 +53,16 @@ import rx.functions.Func1;
 public class RetrofitRedditRepository implements RedditRepository {
     private final Service mService;
     private final Gson mGson;
-
     private final LruCache<String, Subreddits> mSubredditsCache;
     private final LruCache<Pair<String, Sort>, Posts> mPostsCache;
 
-    public RetrofitRedditRepository(String baseUrl) {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+    public RetrofitRedditRepository(String baseUrl, TokenManager tokenManager) {
+        HttpLoggingInterceptor logger = new HttpLoggingInterceptor();
+        logger.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
+                .addInterceptor(logger)
+                .addInterceptor(tokenManager.getInterceptor())
+                .addInterceptor(mDecorator)
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -262,6 +268,17 @@ public class RetrofitRedditRepository implements RedditRepository {
             jsonObject.add("preview_images", previewImages);
         }
     }
+
+    private final Interceptor mDecorator = new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request.Builder builder = chain.request().newBuilder();
+            builder.addHeader("User-Agent", "android:" +
+                    BuildConfig.APPLICATION_ID +
+                    ":v" + BuildConfig.VERSION_NAME);
+            return chain.proceed(builder.build());
+        }
+    };
 
     public interface Service {
         @GET("subreddits/default.json")

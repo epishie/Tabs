@@ -16,6 +16,7 @@
 
 package com.epishie.tabs.feature.posts;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import com.epishie.tabs.App;
@@ -110,6 +111,10 @@ public class PostsFragmentTest {
     }
 
     private class MockModule extends AppModule {
+        public MockModule() {
+            super(RuntimeEnvironment.application);
+        }
+
         @Override
         public PostsFeature.Presenter providePostsPresenter(RedditRepository repository,
                                                             @Named("main") Scheduler mainScheduler,

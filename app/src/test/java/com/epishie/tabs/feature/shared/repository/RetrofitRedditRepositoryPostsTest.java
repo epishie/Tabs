@@ -25,8 +25,11 @@ import com.epishie.tabs.feature.shared.repository.RedditRepository.FetchType;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
+import okhttp3.Response;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -34,6 +37,8 @@ import rx.observers.TestSubscriber;
 import rx.schedulers.TestScheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RetrofitRedditRepositoryPostsTest {
     MockWebServer mServer;
@@ -43,7 +48,14 @@ public class RetrofitRedditRepositoryPostsTest {
     @Before
     public void setUp() {
         mServer = new MockWebServer();
-        mRepository = new RetrofitRedditRepository(mServer.url("").toString());
+        TokenManager tokenManager = mock(TokenManager.class);
+        when(tokenManager.getInterceptor()).thenReturn(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                return chain.proceed(chain.request());
+            }
+        });
+        mRepository = new RetrofitRedditRepository(mServer.url("").toString(), tokenManager);
         mScheduler = new TestScheduler();
     }
 

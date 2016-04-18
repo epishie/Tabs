@@ -16,11 +16,16 @@
 
 package com.epishie.tabs.di;
 
+import android.content.Context;
+
 import com.epishie.tabs.BuildConfig;
 import com.epishie.tabs.feature.posts.PostsFeature;
 import com.epishie.tabs.feature.posts.PostsPresenter;
+import com.epishie.tabs.feature.shared.repository.PreferenceSessionRepository;
 import com.epishie.tabs.feature.shared.repository.RedditRepository;
 import com.epishie.tabs.feature.shared.repository.RetrofitRedditRepository;
+import com.epishie.tabs.feature.shared.repository.SessionRepository;
+import com.epishie.tabs.feature.shared.repository.TokenManager;
 import com.epishie.tabs.feature.subreddits.SubredditsFeature;
 import com.epishie.tabs.feature.subreddits.SubredditsPresenter;
 
@@ -35,6 +40,12 @@ import rx.schedulers.Schedulers;
 
 @Module
 public class AppModule {
+    private final Context mContext;
+
+    public AppModule(Context context) {
+        mContext = context;
+    }
+
     @Singleton
     @Named("main")
     @Provides
@@ -51,8 +62,20 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public RedditRepository provideRedditRepository() {
-        return new RetrofitRedditRepository(BuildConfig.BASE_URL);
+    public RedditRepository provideRedditRepository(TokenManager tokenManager) {
+        return new RetrofitRedditRepository(BuildConfig.BASE_URL, tokenManager);
+    }
+
+    @Singleton
+    @Provides
+    public SessionRepository provideSessionRepository() {
+        return new PreferenceSessionRepository(mContext);
+    }
+
+    @Singleton
+    @Provides
+    public TokenManager provideTokenManager(SessionRepository sessionRepository) {
+        return new TokenManager(BuildConfig.TOKEN_URL, BuildConfig.OAUTH_CLIENT_ID, sessionRepository);
     }
 
     @Provides

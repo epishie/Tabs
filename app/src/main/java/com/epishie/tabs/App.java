@@ -20,6 +20,7 @@ import android.app.Application;
 import android.support.annotation.VisibleForTesting;
 
 import com.epishie.tabs.di.AppComponent;
+import com.epishie.tabs.di.AppModule;
 import com.epishie.tabs.di.DaggerAppComponent;
 
 public class App extends Application {
@@ -28,7 +29,9 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mComponent = DaggerAppComponent.create();
+        mComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
     }
 
     public AppComponent getComponent() {

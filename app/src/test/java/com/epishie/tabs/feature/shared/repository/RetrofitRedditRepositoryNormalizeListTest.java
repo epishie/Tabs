@@ -25,7 +25,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.Response;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RetrofitRedditRepositoryNormalizeListTest {
     static Gson mGson;
@@ -38,7 +45,14 @@ public class RetrofitRedditRepositoryNormalizeListTest {
 
     @Before
     public void setUp() {
-        mRepository = new RetrofitRedditRepository("http://example.com");
+        TokenManager tokenManager = mock(TokenManager.class);
+        when(tokenManager.getInterceptor()).thenReturn(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                return chain.proceed(chain.request());
+            }
+        });
+        mRepository = new RetrofitRedditRepository("http://example.com", tokenManager);
     }
 
     @Test
