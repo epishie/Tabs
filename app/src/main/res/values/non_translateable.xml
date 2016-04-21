@@ -25,6 +25,7 @@
                     div,p,span,table {width: 100%% !important;}
                     img {height: auto; max-width: 100%%;}
                     a { color: #%s; text-decoration: none; }
+                    body { font-size: 0.75em; }
                 </style>
             </head>
             <body>
