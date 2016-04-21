@@ -34,8 +34,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import com.epishie.tabs.App;
 import com.epishie.tabs.R;
@@ -67,6 +69,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     private ViewPager mPages;
     private TabLayout mTabs;
     private WebView mSidebar;
+    private ProgressBar mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,6 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         } else {
             mAdapter.restoreState(savedInstanceState);
         }
-        getSupportActionBar().setTitle(SORT_OPTIONS.get(mAdapter.getSort().ordinal()).second);
     }
 
     @Override
@@ -105,15 +107,18 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
         MenuItem sidebar = menu.findItem(R.id.sidebar);
         MenuItem sortGroup = menu.findItem(R.id.sort);
+        MenuItem refresh = menu.findItem(R.id.refresh);
         SubredditViewModel subreddit = mAdapter.getSubreddit(mPages.getCurrentItem());
         if (subreddit != null) {
             sortGroup.setVisible(true);
             sortGroup.setVisible(true);
             MenuItem sortItem = menu.findItem(SORT_OPTIONS.get(mAdapter.getSort().ordinal()).first);
             sortItem.setChecked(true);
+            refresh.setVisible(true);
         } else {
             sidebar.setVisible(false);
             sortGroup.setVisible(false);
+            refresh.setVisible(false);
         }
 
         return true;
@@ -184,6 +189,9 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
     @Override
     public void showSubreddits(List<SubredditViewModel> subreddits) {
         mAdapter.addSubreddits(subreddits);
+        mProgress.setVisibility(View.GONE);
+        mTabs.setVisibility(View.VISIBLE);
+        getSupportActionBar().setTitle(SORT_OPTIONS.get(mAdapter.getSort().ordinal()).second);
         invalidateOptionsMenu();
         updateSidebar();
     }
@@ -251,6 +259,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         });
 
         mSidebar = (WebView) findViewById(R.id.sidebar);
+        mProgress = (ProgressBar) findViewById(R.id.progress);
     }
 
     private void updateSidebar() {
