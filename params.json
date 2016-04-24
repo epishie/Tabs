@@ -1,6 +1,6 @@
 {
   "name": "Tabs",
   "tagline": "",
-  "body": "### Welcome to Tabs for Reddit\r\nTabs for Reddit is a minimalistic Android client for Reddit.\r\n\r\n#### Alpha/Beta Testing\r\nParticipate in the open alpha/beta testing by downloading the app in [HockeyApp](https://rink.hockeyapp.net/apps/2a2a77e1284e414abc97f02562d01af4)\r\n",
+  "body": "### Welcome to Tabs for Reddit\r\nTabs for Reddit is a minimalistic Android client for Reddit.\r\n[![Circle CI](https://circleci.com/gh/epishie/Tabs.svg?style=shield)](https://circleci.com/gh/epishie/Tabs)\r\n\r\n#### Alpha/Beta Testing\r\nParticipate in the open alpha/beta testing by downloading the app in [HockeyApp](https://rink.hockeyapp.net/apps/2a2a77e1284e414abc97f02562d01af4)",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
