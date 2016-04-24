@@ -17,7 +17,6 @@
 package com.epishie.tabs.feature.shared.repository;
 
 import com.epishie.tabs.BuildConfig;
-import com.epishie.tabs.feature.shared.model.Subreddits;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,8 +58,9 @@ public class RetrofitRedditRepositoryTest {
     @Test
     public void testUserAgent() throws InterruptedException {
         mServer.enqueue(new MockResponse().setResponseCode(200));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber subscriber = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);

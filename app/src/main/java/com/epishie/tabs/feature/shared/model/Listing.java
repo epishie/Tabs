@@ -16,17 +16,37 @@
 
 package com.epishie.tabs.feature.shared.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
-public class Subreddits {
+public class Listing<T> {
+    public static final String KIND = "Listing";
+
+    String before;
     String after;
-    List<Subreddit> children;
+    String modhash;
+    List<Thing<T>> children;
+
+    public String getBefore() {
+        return before;
+    }
 
     public String getAfter() {
         return after;
     }
 
-    public List<Subreddit> getChildren() {
+    public String getModhash() {
+        return modhash;
+    }
+
+    public List<Thing<T>> getChildren() {
         return children;
+    }
+
+    public void addChildren(@NonNull Listing<T> listing) {
+        children.addAll(listing.getChildren());
+        before = listing.before;
+        after = listing.after;
     }
 }

@@ -16,8 +16,10 @@
 
 package com.epishie.tabs.feature.subreddits;
 
+import com.epishie.tabs.error.ResponseError;
+import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Subreddit;
-import com.epishie.tabs.feature.shared.model.Subreddits;
+import com.epishie.tabs.feature.shared.model.Thing;
 import com.epishie.tabs.feature.shared.repository.RedditRepository;
 
 import org.junit.Before;
@@ -33,6 +35,7 @@ import rx.Observable;
 import rx.schedulers.TestScheduler;
 
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,19 +63,36 @@ public class SubredditsPresenterTest {
         mPresenter.onLoad();
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getSubreddits();
+        verify(mRepository).getSubreddits("default");
         verify(mView).showSubreddits(anyListOf(SubredditViewModel.class));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testOnLoadError() {
+        mockSubredditsError();
+        mPresenter.onLoad();
+        mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+    }
+
+    @SuppressWarnings("unchecked")
     private void mockSubreddits(int count) {
-        Subreddits subreddits = mock(Subreddits.class);
-        List<Subreddit> subredditList = new ArrayList<>();
+        List<Thing<Subreddit>> children = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
             Subreddit subreddit = mock(Subreddit.class);
             when(subreddit.getUrl()).thenReturn("/r/URL" + i + "/");
-            subredditList.add(subreddit);
+            Thing<Subreddit> subredditThing = mock(Thing.class);
+            when(subredditThing.getData()).thenReturn(subreddit);
+            children.add(subredditThing);
         }
-        when(subreddits.getChildren()).thenReturn(subredditList);
-        when(mRepository.getSubreddits()).thenReturn(Observable.just(subreddits));
+        Listing<Subreddit> subredditsListing = mock(Listing.class);
+        when(subredditsListing.getChildren()).thenReturn(children);
+        Thing<Listing<Subreddit>> subredditsThing = mock(Thing.class);
+        when(subredditsThing.getData()).thenReturn(subredditsListing);
+        when(mRepository.getSubreddits(anyString())).thenReturn(Observable.just(subredditsThing));
+    }
+
+    private void mockSubredditsError() {
+        when(mRepository.getSubreddits(anyString()))
+                .thenReturn(Observable.<Thing<Listing<Subreddit>>>error(new ResponseError()));
     }
 }

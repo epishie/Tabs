@@ -18,20 +18,15 @@ package com.epishie.tabs.feature.shared.model;
 
 import java.util.List;
 
-public class Posts {
-    String after;
-    List<Post> children;
+public class Image {
+    List<ImageData> resolutions;
+    ImageData source;
 
-    public String getAfter() {
-        return after;
+    public List<ImageData> getResolutions() {
+        return resolutions;
     }
 
-    public List<Post> getChildren() {
-        return children;
-    }
-
-    public void addPosts(Posts posts) {
-        after = posts.after;
-        children.addAll(posts.children);
+    public ImageData getSource() {
+        return source;
     }
 }

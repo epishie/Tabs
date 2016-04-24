@@ -16,17 +16,15 @@
 
 package com.epishie.tabs.feature.shared.model;
 
-public class Subreddit {
-    public static final String KIND = "t5";
+public class Comment {
+    String author;
+    String body_html;
 
-    String url;
-    String description_html;
-
-    public String getUrl() {
-        return url;
+    public String getAuthor() {
+        return author;
     }
 
-    public String getDescriptionHtml() {
-        return description_html;
+    public String getBodyHtml() {
+        return body_html;
     }
 }

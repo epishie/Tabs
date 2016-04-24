@@ -18,7 +18,9 @@ package com.epishie.tabs.feature.shared.repository;
 
 import com.epishie.tabs.error.ConnectionError;
 import com.epishie.tabs.error.ResponseError;
-import com.epishie.tabs.feature.shared.model.Subreddits;
+import com.epishie.tabs.feature.shared.model.Listing;
+import com.epishie.tabs.feature.shared.model.Subreddit;
+import com.epishie.tabs.feature.shared.model.Thing;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,8 +62,8 @@ public class RetrofitRedditRepositorySubredditTest {
     @Test
     public void testRequest() throws InterruptedException {
         mServer.enqueue(new MockResponse().setResponseCode(200));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber<Thing<Listing<Subreddit>>> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -73,8 +75,8 @@ public class RetrofitRedditRepositorySubredditTest {
     @Test
     public void testConnectionError() {
         mServer.enqueue(new MockResponse().setResponseCode(404));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber<Thing<Listing<Subreddit>>> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -87,8 +89,8 @@ public class RetrofitRedditRepositorySubredditTest {
         mServer.enqueue(new MockResponse()
                 .setBody("")
                 .setResponseCode(200));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber<Thing<Listing<Subreddit>>> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -108,13 +110,14 @@ public class RetrofitRedditRepositorySubredditTest {
                 "               }" +
                 "           }" +
                 "       ]" +
-                "   }" +
+                "   }," +
+                "   \"kind\": \"t3\"" +
                 "}";
         mServer.enqueue(new MockResponse()
                 .setBody(json)
                 .setResponseCode(200));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber<Thing<Listing<Subreddit>>> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -134,17 +137,18 @@ public class RetrofitRedditRepositorySubredditTest {
                 "               }" +
                 "           }" +
                 "       ]" +
-                "   }" +
+                "   }," +
+                "   \"kind\": \"t3\"" +
                 "}";
         mServer.enqueue(new MockResponse()
                 .setBody(json)
                 .setResponseCode(200));
-        TestSubscriber<Subreddits> subscriber = new TestSubscriber<>();
-        mRepository.getSubreddits()
+        TestSubscriber<Thing<Listing<Subreddit>>> subscriber = new TestSubscriber<>();
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-        mRepository.getSubreddits()
+        mRepository.getSubreddits("default")
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);

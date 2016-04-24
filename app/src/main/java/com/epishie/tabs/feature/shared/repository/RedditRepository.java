@@ -16,15 +16,17 @@
 
 package com.epishie.tabs.feature.shared.repository;
 
-import com.epishie.tabs.feature.shared.model.Posts;
+import com.epishie.tabs.feature.shared.model.Link;
+import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Sort;
-import com.epishie.tabs.feature.shared.model.Subreddits;
+import com.epishie.tabs.feature.shared.model.Subreddit;
+import com.epishie.tabs.feature.shared.model.Thing;
 
 import rx.Observable;
 
 public interface RedditRepository {
-    Observable<Subreddits> getSubreddits();
-    Observable<Posts> getPosts(String subreddit, Sort sort, FetchType fetchType);
+    Observable<Thing<Listing<Subreddit>>> getSubreddits(String where);
+    Observable<Thing<Listing<Link>>> getLinks(String subreddit, Sort sort, FetchType fetchType);
 
     enum FetchType {
         NORMAL,

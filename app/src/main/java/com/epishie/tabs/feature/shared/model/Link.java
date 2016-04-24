@@ -18,14 +18,16 @@ package com.epishie.tabs.feature.shared.model;
 
 import java.util.List;
 
-public class Post {
+public class Link {
+    public static final String KIND = "t3";
+
     String title;
     String url;
     String author;
     int num_comments;
     int score;
     long created_utc;
-    List<Image> preview_images;
+    Preview preview;
 
     public String getTitle() {
         return title;
@@ -39,7 +41,7 @@ public class Post {
         return author;
     }
 
-    public int getCommentCount() {
+    public int getNumComments() {
         return num_comments;
     }
 
@@ -47,19 +49,19 @@ public class Post {
         return score;
     }
 
-    public long getCreated() {
+    public long getCreatedUtc() {
         return created_utc;
     }
 
-    public List<Image> getPreviewImages() {
-        return preview_images;
+    public Preview getPreview() {
+        return preview;
     }
 
-    public static class Image {
-        String url;
+    public static class Preview {
+        List<Image> images;
 
-        public String getUrl() {
-            return url;
+        public List<Image> getImages() {
+            return images;
         }
     }
 }

@@ -16,9 +16,10 @@
 
 package com.epishie.tabs.feature.posts;
 
-import com.epishie.tabs.feature.shared.model.Post;
-import com.epishie.tabs.feature.shared.model.Posts;
+import com.epishie.tabs.feature.shared.model.Link;
+import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Sort;
+import com.epishie.tabs.feature.shared.model.Thing;
 import com.epishie.tabs.feature.shared.repository.RedditRepository;
 import com.epishie.tabs.feature.shared.repository.RedditRepository.FetchType;
 
@@ -39,6 +40,7 @@ import rx.schedulers.TestScheduler;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,7 +71,7 @@ public class PostsPresenterTest {
         mPresenter.onLoad("gadgets", Sort.HOT);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", Sort.HOT, FetchType.NORMAL);
+        verify(mRepository).getLinks("gadgets", Sort.HOT, FetchType.NORMAL);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
@@ -79,7 +81,7 @@ public class PostsPresenterTest {
         mPresenter.onLoadMore("gadgets", Sort.NEW);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", Sort.NEW, FetchType.NEXT);
+        verify(mRepository).getLinks("gadgets", Sort.NEW, FetchType.NEXT);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
@@ -89,19 +91,24 @@ public class PostsPresenterTest {
         mPresenter.onRefresh("gadgets", Sort.RISING);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        verify(mRepository).getPosts("gadgets", Sort.RISING, FetchType.REFRESH);
+        verify(mRepository).getLinks("gadgets", Sort.RISING, FetchType.REFRESH);
         verify(mView).showPosts(anyListOf(PostViewModel.class));
     }
 
+    @SuppressWarnings("unchecked")
     private void mockPosts(int count) {
-        Posts posts = mock(Posts.class);
-        List<Post> children = new ArrayList<>();
+        List<Thing<Link>> children = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            Post post = mock(Post.class);
-            when(post.getTitle()).thenReturn("Title#" + i);
-            children.add(post);
+            Link link = mock(Link.class);
+            when(link.getTitle()).thenReturn("Title#" + i);
+            Thing<Link> linkThing = mock(Thing.class);
+            when(linkThing.getData()).thenReturn(link);
+            children.add(linkThing);
         }
-        when(posts.getChildren()).thenReturn(children);
-        when(mRepository.getPosts(eq("gadgets"), any(Sort.class), any(FetchType.class))).thenReturn(Observable.just(posts));
+        Listing<Link> linkListing = mock(Listing.class);
+        when(linkListing.getChildren()).thenReturn(children);
+        Thing<Listing<Link>> linksThing = mock(Thing.class);
+        when(mRepository.getLinks(eq("gadgets"), any(Sort.class), any(FetchType.class)))
+                .thenReturn(Observable.just(linksThing));
     }
 }

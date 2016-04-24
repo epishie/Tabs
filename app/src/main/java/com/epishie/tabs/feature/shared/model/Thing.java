@@ -16,17 +16,26 @@
 
 package com.epishie.tabs.feature.shared.model;
 
-public class Subreddit {
-    public static final String KIND = "t5";
+public class Thing<T> {
+    String id;
+    String name;
+    T data;
 
-    String url;
-    String description_html;
-
-    public String getUrl() {
-        return url;
+    public Thing(String id, String name, T data) {
+        this.id = id;
+        this.name = name;
+        this.data = data;
     }
 
-    public String getDescriptionHtml() {
-        return description_html;
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public T getData() {
+        return data;
     }
 }

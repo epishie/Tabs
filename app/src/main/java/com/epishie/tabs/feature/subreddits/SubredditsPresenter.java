@@ -16,8 +16,9 @@
 
 package com.epishie.tabs.feature.subreddits;
 
+import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Subreddit;
-import com.epishie.tabs.feature.shared.model.Subreddits;
+import com.epishie.tabs.feature.shared.model.Thing;
 import com.epishie.tabs.feature.shared.repository.RedditRepository;
 
 import java.util.ArrayList;
@@ -53,39 +54,38 @@ public class SubredditsPresenter implements SubredditsFeature.Presenter {
 
     @Override
     public void onLoad() {
-        mRepository.getSubreddits()
+        mRepository.getSubreddits("default")
                 .subscribeOn(mWorkerScheduler)
-                .map(getSubredditsMapper())
+                .map(new Func1<Thing<Listing<Subreddit>>, List<SubredditViewModel>>() {
+                    @Override
+                    public List<SubredditViewModel> call(Thing<Listing<Subreddit>> thing) {
+                        List<SubredditViewModel> mappedSubreddits = new ArrayList<>();
+                        for (Thing<Subreddit> subredditThing : thing.getData().getChildren()) {
+                            Subreddit subreddit = subredditThing.getData();
+                            Matcher urlMatcher = mUrlPattern.matcher(subreddit.getUrl());
+                            String name = subreddit.getUrl();
+                            if (urlMatcher.find()) {
+                                name = urlMatcher.group(1);
+                            }
+                            mappedSubreddits.add(new SubredditViewModel(name, subreddit.getDescriptionHtml()));
+                        }
+                        return mappedSubreddits;
+                    }
+                })
                 .observeOn(mMainScheduler)
                 .subscribe(new Subscriber<List<SubredditViewModel>>() {
                     @Override
                     public void onCompleted() { }
 
                     @Override
-                    public void onError(Throwable e) { }
+                    public void onError(Throwable e) {
+                        throw new RuntimeException(e);
+                    }
 
                     @Override
-                    public void onNext(List<SubredditViewModel> subreddits) {
-                        mView.showSubreddits(subreddits);
+                    public void onNext(List<SubredditViewModel> subredditViewModels) {
+                        mView.showSubreddits(subredditViewModels);
                     }
                 });
-    }
-
-    private Func1<Subreddits, List<SubredditViewModel>> getSubredditsMapper() {
-        return new Func1<Subreddits, List<SubredditViewModel>>() {
-            @Override
-            public List<SubredditViewModel> call(Subreddits subreddits) {
-                List<SubredditViewModel> mappedSubreddits = new ArrayList<>();
-                for (Subreddit subreddit : subreddits.getChildren()) {
-                    Matcher urlMatcher = mUrlPattern.matcher(subreddit.getUrl());
-                    String name = subreddit.getUrl();
-                    if (urlMatcher.find()) {
-                        name = urlMatcher.group(1);
-                    }
-                    mappedSubreddits.add(new SubredditViewModel(name, subreddit.getDescriptionHtml()));
-                }
-                return mappedSubreddits;
-            }
-        };
     }
 }

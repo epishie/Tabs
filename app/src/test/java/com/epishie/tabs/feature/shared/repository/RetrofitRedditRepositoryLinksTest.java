@@ -18,8 +18,10 @@ package com.epishie.tabs.feature.shared.repository;
 
 import com.epishie.tabs.error.ConnectionError;
 import com.epishie.tabs.error.ResponseError;
-import com.epishie.tabs.feature.shared.model.Posts;
+import com.epishie.tabs.feature.shared.model.Link;
+import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Sort;
+import com.epishie.tabs.feature.shared.model.Thing;
 import com.epishie.tabs.feature.shared.repository.RedditRepository.FetchType;
 
 import org.junit.Before;
@@ -40,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RetrofitRedditRepositoryPostsTest {
+public class RetrofitRedditRepositoryLinksTest {
     MockWebServer mServer;
     RedditRepository mRepository;
     TestScheduler mScheduler;
@@ -62,8 +64,9 @@ public class RetrofitRedditRepositoryPostsTest {
     @Test
     public void testRequest() throws InterruptedException {
         mServer.enqueue(new MockResponse().setResponseCode(200));
-        TestSubscriber<Posts> subscriber = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber subscriber = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -77,15 +80,17 @@ public class RetrofitRedditRepositoryPostsTest {
         mServer.enqueue(new MockResponse()
                 .setBody(mockPosts("title1"))
                 .setResponseCode(200));
-        TestSubscriber<Posts> subscriber = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber subscriber = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
         mServer.enqueue(new MockResponse()
                 .setBody(mockPosts("title2"))
                 .setResponseCode(200));
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -101,13 +106,15 @@ public class RetrofitRedditRepositoryPostsTest {
         mServer.enqueue(new MockResponse()
                 .setBody(mockPosts("title2"))
                 .setResponseCode(200));
-        TestSubscriber<Posts> subscriber1 = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber subscriber1 = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber1);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-        TestSubscriber<Posts> subscriber2 = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.REFRESH)
+        TestSubscriber subscriber2 = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.REFRESH)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber2);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -123,13 +130,13 @@ public class RetrofitRedditRepositoryPostsTest {
         mServer.enqueue(new MockResponse()
                 .setBody(mockPosts("title2", "second_token"))
                 .setResponseCode(200));
-        TestSubscriber<Posts> subscriber1 = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber<Thing<Listing<Link>>> subscriber1 = new TestSubscriber<>();
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber1);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-        TestSubscriber<Posts> subscriber2 = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NEXT)
+        TestSubscriber<Thing<Listing<Link>>> subscriber2 = new TestSubscriber<>();
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NEXT)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber2);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -137,17 +144,20 @@ public class RetrofitRedditRepositoryPostsTest {
         mServer.takeRequest();
         RecordedRequest nextRequest = mServer.takeRequest();
         assertThat(nextRequest.getPath()).isEqualTo("/r/gadgets/hot.json?after=first_token");
-        Posts response = subscriber2.getOnNextEvents().get(0);
-        assertThat(response.getAfter()).isEqualTo("second_token");
-        assertThat(response.getChildren()).hasSize(1);
-        assertThat(response.getChildren().get(0).getTitle()).isEqualTo("title2");
+        Thing<Listing<Link>> response = subscriber2.getOnNextEvents().get(0);
+        assertThat(response.getData()).isNotNull();
+        assertThat(response.getData().getAfter()).isEqualTo("second_token");
+        assertThat(response.getData().getChildren()).hasSize(1);
+        assertThat(response.getData().getChildren().get(0).getData()).isNotNull();
+        assertThat(response.getData().getChildren().get(0).getData().getTitle()).isEqualTo("title2");
     }
 
     @Test
     public void testRequestSort() throws InterruptedException {
         mServer.enqueue(new MockResponse().setResponseCode(200));
-        TestSubscriber<Posts> subscriber = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.CONTROVERSIAL, FetchType.NORMAL)
+        TestSubscriber subscriber = new TestSubscriber<>();
+        // noinspection unchecked
+        mRepository.getLinks("gadgets", Sort.CONTROVERSIAL, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -159,8 +169,8 @@ public class RetrofitRedditRepositoryPostsTest {
     @Test
     public void testConnectionError() {
         mServer.enqueue(new MockResponse().setResponseCode(404));
-        TestSubscriber<Posts> subscriber = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber<Thing<Listing<Link>>> subscriber = new TestSubscriber<>();
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -173,8 +183,8 @@ public class RetrofitRedditRepositoryPostsTest {
         mServer.enqueue(new MockResponse()
                 .setBody("")
                 .setResponseCode(200));
-        TestSubscriber<Posts> subscriber = new TestSubscriber<>();
-        mRepository.getPosts("gadgets", Sort.HOT, FetchType.NORMAL)
+        TestSubscriber<Thing<Listing<Link>>> subscriber = new TestSubscriber<>();
+        mRepository.getLinks("gadgets", Sort.HOT, FetchType.NORMAL)
                 .subscribeOn(mScheduler)
                 .subscribe(subscriber);
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -194,10 +204,12 @@ public class RetrofitRedditRepositoryPostsTest {
                 "           {" +
                 "               \"data\": {" +
                 "                   \"title\": \"" + title + "\"" +
-                "               }" +
+                "               }," +
+                "               \"kind\": \"t3\"" +
                 "           }" +
                 "       ]" +
-                "   }" +
+                "   }," +
+                "   \"kind\": \"Listing\"" +
                 "}";
     }
 }
