@@ -16,7 +16,7 @@
 
 package com.epishie.tabs.di;
 
-import com.epishie.tabs.feature.posts.PostsFragment;
+import com.epishie.tabs.feature.links.LinksFragment;
 import com.epishie.tabs.feature.subreddits.SubredditsActivity;
 
 import javax.inject.Singleton;
@@ -27,5 +27,5 @@ import dagger.Component;
 @Component(modules = AppModule.class)
 public interface AppComponent {
     void inject(SubredditsActivity activity);
-    void inject(PostsFragment fragment);
+    void inject(LinksFragment fragment);
 }

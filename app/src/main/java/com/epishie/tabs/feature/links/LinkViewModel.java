@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class PostViewModel implements Parcelable {
+public class LinkViewModel implements Parcelable {
     private final String mTitle;
     private final String mByLine;
     private final String mScore;
     private final String mPreview;
 
-    private PostViewModel(Builder builder) {
+    private LinkViewModel(Builder builder) {
         mTitle = builder.mTitle;
         mByLine = builder.mByLine;
         mScore = builder.mScore;
         mPreview = builder.mPreview;
     }
 
-    public PostViewModel(Parcel in) {
+    public LinkViewModel(Parcel in) {
         mTitle = in.readString();
         mByLine = in.readString();
         mScore = in.readString();
@@ -68,15 +68,15 @@ public class PostViewModel implements Parcelable {
         dest.writeString(mPreview);
     }
 
-    public static final Creator<PostViewModel> CREATOR = new Creator<PostViewModel>() {
+    public static final Creator<LinkViewModel> CREATOR = new Creator<LinkViewModel>() {
         @Override
-        public PostViewModel createFromParcel(Parcel source) {
-            return new PostViewModel(source);
+        public LinkViewModel createFromParcel(Parcel source) {
+            return new LinkViewModel(source);
         }
 
         @Override
-        public PostViewModel[] newArray(int size) {
-            return new PostViewModel[size];
+        public LinkViewModel[] newArray(int size) {
+            return new LinkViewModel[size];
         }
     };
 
@@ -114,8 +114,8 @@ public class PostViewModel implements Parcelable {
             return this;
         }
 
-        public PostViewModel build() {
-            return new PostViewModel(this);
+        public LinkViewModel build() {
+            return new LinkViewModel(this);
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package com.epishie.tabs.gson;
 
+import com.epishie.tabs.feature.shared.model.Comment;
 import com.epishie.tabs.feature.shared.model.Link;
 import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Thing;
@@ -116,5 +117,22 @@ public class ThingDeserializerTest {
         assertThat(listingThing.getData().getChildren().get(0).getData().getTitle()).isEqualTo("TEST_TITLE_1");
         assertThat(listingThing.getData().getChildren().get(1).getData()).isNotNull();
         assertThat(listingThing.getData().getChildren().get(1).getData().getTitle()).isEqualTo("TEST_TITLE_2");
+    }
+
+    @Test
+    public void testKindIsComment() {
+        String json = "{" +
+                "   \"kind\": \"t1\"," +
+                "   \"data\": {" +
+                "       \"author\": \"TEST_AUTHOR\"," +
+                "       \"body_html\": \"TEST_BODY_HTML\"" +
+                "   }" +
+                "}";
+        // noinspection unchecked
+        Thing<Comment> commentThing = mGson.fromJson(json, Thing.class);
+        assertThat(commentThing).isNotNull();
+        assertThat(commentThing.getData()).isNotNull();
+        assertThat(commentThing.getData().getAuthor()).isEqualTo("TEST_AUTHOR");
+        assertThat(commentThing.getData().getBodyHtml()).isEqualTo("TEST_BODY_HTML");
     }
 }

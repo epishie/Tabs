@@ -17,6 +17,8 @@
 package com.epishie.tabs.feature.shared.model;
 
 public class Comment {
+    public static final String KIND = "t1";
+
     String author;
     String body_html;
 

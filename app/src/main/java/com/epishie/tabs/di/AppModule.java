@@ -19,8 +19,8 @@ package com.epishie.tabs.di;
 import android.content.Context;
 
 import com.epishie.tabs.BuildConfig;
-import com.epishie.tabs.feature.posts.PostsFeature;
-import com.epishie.tabs.feature.posts.PostsPresenter;
+import com.epishie.tabs.feature.links.LinksFeature;
+import com.epishie.tabs.feature.links.LinksPresenter;
 import com.epishie.tabs.feature.shared.repository.PreferenceSessionRepository;
 import com.epishie.tabs.feature.shared.repository.RedditRepository;
 import com.epishie.tabs.feature.shared.repository.RetrofitRedditRepository;
@@ -86,9 +86,9 @@ public class AppModule {
     }
 
     @Provides
-    public PostsFeature.Presenter providePostsPresenter(RedditRepository repository,
+    public LinksFeature.Presenter providePostsPresenter(RedditRepository repository,
                                                         @Named("main") Scheduler mainScheduler,
                                                         @Named("worker") Scheduler workerScheduler) {
-        return new PostsPresenter(repository, mainScheduler, workerScheduler);
+        return new LinksPresenter(repository, mainScheduler, workerScheduler);
     }
 }

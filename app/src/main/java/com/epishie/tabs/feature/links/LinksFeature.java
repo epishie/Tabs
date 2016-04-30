@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
 import android.content.Context;
 
@@ -22,9 +22,9 @@ import com.epishie.tabs.feature.shared.model.Sort;
 
 import java.util.List;
 
-public interface PostsFeature {
+public interface LinksFeature {
     interface View {
-        void showPosts(List<PostViewModel> posts);
+        void showPosts(List<LinkViewModel> posts);
         void refresh();
         Context getContext();
     }

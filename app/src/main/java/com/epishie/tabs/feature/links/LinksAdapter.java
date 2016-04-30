@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,16 +31,16 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class LinksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_LOADING = -1;
     private static final int TYPE_POST = 0;
     private static final int TYPE_POST_PREVIEW = 1;
 
-    private final List<PostViewModel> mPosts;
+    private final List<LinkViewModel> mPosts;
     private LayoutInflater mInflater;
     private boolean mLoading;
 
-    public PostsAdapter() {
+    public LinksAdapter() {
         mPosts = new ArrayList<>();
     }
 
@@ -52,37 +53,44 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_LOADING) {
-            return new PostLoaderViewHolder(mInflater.inflate(R.layout.item_post_loader,
+            return new PostLoaderViewHolder(mInflater.inflate(R.layout.item_link_loader,
                     parent,
                     false));
         }
         if (viewType == TYPE_POST) {
-            return new PostViewHolder(mInflater.inflate(R.layout.item_post,
+            return new PostViewHolder(mInflater.inflate(R.layout.item_link,
                     parent,
                     false));
         }
-        return new PostPreviewViewHolder(mInflater.inflate(R.layout.item_post_image,
+        return new PostPreviewViewHolder(mInflater.inflate(R.layout.item_link_image,
                 parent,
                 false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        PostViewModel post = mPosts.get(position);
+        final LinkViewModel post = mPosts.get(position);
         if (holder instanceof PostPreviewViewHolder) {
             onBindViewHolder((PostPreviewViewHolder) holder, post);
         } else if (holder instanceof PostViewHolder) {
             onBindViewHolder((PostViewHolder) holder, post);
         }
+        final Context context = holder.itemView.getContext();
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO start activity
+            }
+        });
     }
 
-    private void onBindViewHolder(PostViewHolder holder, PostViewModel post) {
+    private void onBindViewHolder(PostViewHolder holder, LinkViewModel post) {
         holder.mTitle.setText(post.getTitle());
         holder.mByLine.setText(post.getByLine());
         holder.mScore.setText(post.getScore());
     }
 
-    private void onBindViewHolder(PostPreviewViewHolder holder, PostViewModel post) {
+    private void onBindViewHolder(PostPreviewViewHolder holder, LinkViewModel post) {
         holder.mTitle.setText(post.getTitle());
         holder.mByLine.setText(post.getByLine());
         holder.mScore.setText(post.getScore());
@@ -98,7 +106,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        PostViewModel post = mPosts.get(position);
+        LinkViewModel post = mPosts.get(position);
         if (post == null) {
             return TYPE_LOADING;
         }
@@ -109,7 +117,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return TYPE_POST_PREVIEW;
     }
 
-    public void addPosts(@NonNull List<PostViewModel> posts) {
+    public void addPosts(@NonNull List<LinkViewModel> posts) {
         hideLoader();
         int index = mPosts.size();
         mPosts.addAll(posts);

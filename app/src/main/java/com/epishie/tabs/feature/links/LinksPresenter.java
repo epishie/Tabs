@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
 import android.content.Context;
 
@@ -35,13 +35,13 @@ import rx.Scheduler;
 import rx.Subscriber;
 import rx.functions.Func1;
 
-public class PostsPresenter implements PostsFeature.Presenter {
+public class LinksPresenter implements LinksFeature.Presenter {
     private final RedditRepository mRepository;
     private final Scheduler mMainScheduler;
     private final Scheduler mWorkerScheduler;
-    private PostsFeature.View mView;
+    private LinksFeature.View mView;
 
-    public PostsPresenter(RedditRepository repository,
+    public LinksPresenter(RedditRepository repository,
                           Scheduler mainScheduler,
                           Scheduler workerScheduler) {
         mRepository = repository;
@@ -50,7 +50,7 @@ public class PostsPresenter implements PostsFeature.Presenter {
     }
 
     @Override
-    public void setView(PostsFeature.View view) {
+    public void setView(LinksFeature.View view) {
         mView = view;
     }
 
@@ -71,17 +71,17 @@ public class PostsPresenter implements PostsFeature.Presenter {
 
     private void handleResponse(Observable<Thing<Listing<Link>>> observable) {
         observable.subscribeOn(mWorkerScheduler)
-                .map(new Func1<Thing<Listing<Link>>, List<PostViewModel>>() {
+                .map(new Func1<Thing<Listing<Link>>, List<LinkViewModel>>() {
                     @Override
-                    public List<PostViewModel> call(Thing<Listing<Link>> thing) {
-                        List<PostViewModel> mappedPosts = new ArrayList<>();
+                    public List<LinkViewModel> call(Thing<Listing<Link>> thing) {
+                        List<LinkViewModel> mappedPosts = new ArrayList<>();
                         if (thing.getData() == null ||
                                 thing.getData().getChildren() == null) {
                             return mappedPosts;
                         }
                         for (Thing<Link> linkThing : thing.getData().getChildren()) {
                             Link link = linkThing.getData();
-                            PostViewModel.Builder builder = new PostViewModel.Builder();
+                            LinkViewModel.Builder builder = new LinkViewModel.Builder();
                             builder.setTitle(link.getTitle());
                             builder.setScore(FormatUtil.getScore(link.getScore()));
                             Context context = mView.getContext();
@@ -106,7 +106,7 @@ public class PostsPresenter implements PostsFeature.Presenter {
                     }
                 })
                 .observeOn(mMainScheduler)
-                .subscribe(new Subscriber<List<PostViewModel>>() {
+                .subscribe(new Subscriber<List<LinkViewModel>>() {
                     @Override
                     public void onCompleted() { }
 
@@ -114,7 +114,7 @@ public class PostsPresenter implements PostsFeature.Presenter {
                     public void onError(Throwable e) { }
 
                     @Override
-                    public void onNext(List<PostViewModel> posts) {
+                    public void onNext(List<LinkViewModel> posts) {
                         mView.showPosts(posts);
                     }
                 });

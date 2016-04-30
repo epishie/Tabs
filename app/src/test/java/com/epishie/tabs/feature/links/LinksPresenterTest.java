@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
 import com.epishie.tabs.feature.shared.model.Link;
 import com.epishie.tabs.feature.shared.model.Listing;
@@ -40,20 +40,19 @@ import rx.schedulers.TestScheduler;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class PostsPresenterTest {
+public class LinksPresenterTest {
     @Mock
     RedditRepository mRepository;
     @Mock
-    PostsFeature.View mView;
+    LinksFeature.View mView;
     TestScheduler mScheduler;
-    PostsPresenter mPresenter;
+    LinksPresenter mPresenter;
 
     @Before
     public void setUp() {
@@ -61,7 +60,7 @@ public class PostsPresenterTest {
         when(mView.getContext()).thenReturn(RuntimeEnvironment.application);
 
         mScheduler = new TestScheduler();
-        mPresenter = new PostsPresenter(mRepository, mScheduler, mScheduler);
+        mPresenter = new LinksPresenter(mRepository, mScheduler, mScheduler);
         mPresenter.setView(mView);
     }
 
@@ -72,7 +71,7 @@ public class PostsPresenterTest {
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
         verify(mRepository).getLinks("gadgets", Sort.HOT, FetchType.NORMAL);
-        verify(mView).showPosts(anyListOf(PostViewModel.class));
+        verify(mView).showPosts(anyListOf(LinkViewModel.class));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class PostsPresenterTest {
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
         verify(mRepository).getLinks("gadgets", Sort.NEW, FetchType.NEXT);
-        verify(mView).showPosts(anyListOf(PostViewModel.class));
+        verify(mView).showPosts(anyListOf(LinkViewModel.class));
     }
 
     @Test
@@ -92,7 +91,7 @@ public class PostsPresenterTest {
         mScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
         verify(mRepository).getLinks("gadgets", Sort.RISING, FetchType.REFRESH);
-        verify(mView).showPosts(anyListOf(PostViewModel.class));
+        verify(mView).showPosts(anyListOf(LinkViewModel.class));
     }
 
     @SuppressWarnings("unchecked")

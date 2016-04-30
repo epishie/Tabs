@@ -32,6 +32,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -51,9 +52,9 @@ import rx.functions.Func1;
 
 public class RetrofitRedditRepository implements RedditRepository {
     private final Service mService;
-    private final Gson mGson;
     private final LruCache<String, Thing<Listing<Subreddit>>> mSubredditsCache;
-    private final LruCache<Pair<String, Sort>, Thing<Listing<Link>>> mPostsCache;
+    private final LruCache<Pair<String, Sort>, Thing<Listing<Link>>> mLinksCache;
+    private final LruCache<String, List<Listing>> mLinkCache;
 
     public RetrofitRedditRepository(String baseUrl, TokenManager tokenManager) {
         HttpLoggingInterceptor logger = new HttpLoggingInterceptor();
@@ -63,20 +64,21 @@ public class RetrofitRedditRepository implements RedditRepository {
                 .addInterceptor(tokenManager.getInterceptor())
                 .addInterceptor(mDecorator)
                 .build();
-        mGson = new GsonBuilder()
+        Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Thing.class, new ThingDeserializer())
                 .create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(mGson))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         mService = retrofit.create(Service.class);
 
         mSubredditsCache = new LruCache<>(5000 * 1024);
-        mPostsCache = new LruCache<>(5000 * 1024);
+        mLinksCache = new LruCache<>(5000 * 1024);
+        mLinkCache = new LruCache<>(5000 * 1024);
     }
 
     @Override
@@ -96,16 +98,28 @@ public class RetrofitRedditRepository implements RedditRepository {
         Thing<Listing<Link>> cached = null;
         Pair<String, Sort> key = Pair.create(subreddit, sort);
         if (fetchType == FetchType.REFRESH) {
-            mPostsCache.remove(key);
+            mLinksCache.remove(key);
         } else if (fetchType == FetchType.NEXT) {
-            cached = mPostsCache.remove(key);
+            cached = mLinksCache.remove(key);
         }
-        return Observable.concat(Observable.just(mPostsCache.get(key)),
+        return Observable.concat(Observable.just(mLinksCache.get(key)),
                 getLinksOnline(subreddit, sort, cached))
                 .first(new Func1<Thing<Listing<Link>>, Boolean>() {
                     @Override
                     public Boolean call(Thing<Listing<Link>> posts) {
                         return posts != null;
+                    }
+                });
+    }
+
+    @Override
+    public Observable<List<Listing>> getLinkComments(String subreddit, String id) {
+        return Observable.concat(Observable.just(mLinkCache.get(id)),
+                getLinkOnline(subreddit, id))
+                .first(new Func1<List<Listing>, Boolean>() {
+                    @Override
+                    public Boolean call(List<Listing> link) {
+                        return link != null ;
                     }
                 });
     }
@@ -158,10 +172,35 @@ public class RetrofitRedditRepository implements RedditRepository {
                         Pair<String, Sort> key = Pair.create(subreddit, sort);
                         if (cached != null) {
                             cached.getData().addChildren(posts.getData());
-                            mPostsCache.put(key, posts);
+                            mLinksCache.put(key, posts);
                         } else {
-                            mPostsCache.put(key, posts);
+                            mLinksCache.put(key, posts);
                         }
+                    }
+                });
+    }
+
+    private Observable<List<Listing>> getLinkOnline(final String subreddit,
+                                                  final String id) {
+        return mService.getLinkComments(subreddit, id)
+                .onErrorReturn(new Func1<Throwable, List<Listing>>() {
+                    @Override
+                    public List<Listing> call(Throwable throwable) {
+                        if (throwable instanceof JsonParseException ||
+                                throwable instanceof IOException) {
+                            throw new ResponseError();
+                        }
+                        throw new ConnectionError(throwable);
+                    }
+                })
+                .doOnNext(new Action1<List<Listing>>() {
+                    @Override
+                    public void call(List<Listing> link) {
+                        if (link == null ||
+                                link.size() != 2) {
+                            throw new ResponseError();
+                        }
+                        mLinkCache.put(id, link);
                     }
                 });
     }
@@ -184,5 +223,8 @@ public class RetrofitRedditRepository implements RedditRepository {
         Observable<Thing<Listing<Link>>> getLinks(@Path("subreddit") String subreddit,
                                                   @Path("sort") String sort,
                                                   @Query("after") String after);
+        @GET("r/{subreddit}/comments/{id}.json")
+        Observable<List<Listing>> getLinkComments(@Path("subreddit") String subreddit,
+                                                  @Path("id") String id);
     }
 }

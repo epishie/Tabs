@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,19 +37,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class PostsFragment extends Fragment implements PostsFeature.View {
-    public static final String PARAM_SUBREDDIT = PostsFragment.class.getName() + ".PARAM_SUBREDDIT";
-    public static final String PARAM_SORT = PostsFragment.class.getName() + ".PARAM_SORT";
+public class LinksFragment extends Fragment implements LinksFeature.View {
+    public static final String PARAM_SUBREDDIT = LinksFragment.class.getName() + ".PARAM_SUBREDDIT";
+    public static final String PARAM_SORT = LinksFragment.class.getName() + ".PARAM_SORT";
 
     @Inject
-    protected PostsFeature.Presenter mPresenter;
+    protected LinksFeature.Presenter mPresenter;
     private String mSubreddit;
     private Sort mSort;
     private SwipeRefreshLayout mRefresher;
-    private PostsAdapter mPostsAdapter;
+    private LinksAdapter mLinksAdapter;
 
-    public static PostsFragment createInstance(@NonNull String subreddit, @NonNull Sort sort) {
-        PostsFragment fragment = new PostsFragment();
+    public static LinksFragment createInstance(@NonNull String subreddit, @NonNull Sort sort) {
+        LinksFragment fragment = new LinksFragment();
         Bundle args = new Bundle();
         args.putString(PARAM_SUBREDDIT, subreddit);
         args.putInt(PARAM_SORT, sort.ordinal());
@@ -73,22 +73,22 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_posts, container, false);
+        return inflater.inflate(R.layout.fragment_links, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPostsAdapter = new PostsAdapter();
+        mLinksAdapter = new LinksAdapter();
         RecyclerView posts = (RecyclerView) view.findViewById(R.id.posts);
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
         posts.setLayoutManager(lm);
-        posts.setAdapter(mPostsAdapter);
+        posts.setAdapter(mLinksAdapter);
         posts.addOnScrollListener(new InfiniteScrollListener(lm) {
             @Override
             public void onLoadMore() {
                 mPresenter.onLoadMore(mSubreddit, mSort);
-                mPostsAdapter.showLoader();
+                mLinksAdapter.showLoader();
             }
         });
 
@@ -117,8 +117,8 @@ public class PostsFragment extends Fragment implements PostsFeature.View {
     }
 
     @Override
-    public void showPosts(List<PostViewModel> posts) {
-        mPostsAdapter.addPosts(posts);
+    public void showPosts(List<LinkViewModel> posts) {
+        mLinksAdapter.addPosts(posts);
         mRefresher.setRefreshing(false);
     }
 

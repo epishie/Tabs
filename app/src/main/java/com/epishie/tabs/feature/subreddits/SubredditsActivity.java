@@ -41,7 +41,7 @@ import android.widget.ProgressBar;
 
 import com.epishie.tabs.App;
 import com.epishie.tabs.R;
-import com.epishie.tabs.feature.posts.PostsFragment;
+import com.epishie.tabs.feature.links.LinksFragment;
 import com.epishie.tabs.feature.shared.model.Sort;
 import com.epishie.tabs.util.AppManager;
 
@@ -130,7 +130,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
             mDrawer.openDrawer(GravityCompat.END);
             return true;
         } else if (item.getItemId() == R.id.refresh) {
-            PostsFragment fragment = mAdapter.getFragment(mPages.getCurrentItem());
+            LinksFragment fragment = mAdapter.getFragment(mPages.getCurrentItem());
             if (fragment != null) {
                 fragment.refresh();
             }
@@ -284,7 +284,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         private static final String STATE_SUBREDDITS = SubredditsAdapter.class.getName() + ".STATE_SUBREDDITS";
         private static final String STATE_SORT = SubredditsAdapter.class.getName() + ".STATE_SORT";
         private final List<SubredditViewModel> mSubreddits;
-        private final SparseArrayCompat<WeakReference<PostsFragment>> mFragments;
+        private final SparseArrayCompat<WeakReference<LinksFragment>> mFragments;
         private Sort mSort;
 
         public SubredditsAdapter(FragmentManager fm) {
@@ -297,7 +297,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         @Override
         public Fragment getItem(int position) {
             SubredditViewModel subreddit = mSubreddits.get(position);
-            return PostsFragment.createInstance(subreddit.getName(), mSort);
+            return LinksFragment.createInstance(subreddit.getName(), mSort);
         }
 
         @Override
@@ -318,7 +318,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            PostsFragment fragment = (PostsFragment) super.instantiateItem(container, position);
+            LinksFragment fragment = (LinksFragment) super.instantiateItem(container, position);
             mFragments.put(position, new WeakReference<>(fragment));
             return fragment;
         }
@@ -351,8 +351,8 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
             notifyDataSetChanged();
         }
 
-        public PostsFragment getFragment(int position) {
-            WeakReference<PostsFragment> fragmentRef = mFragments.get(position);
+        public LinksFragment getFragment(int position) {
+            WeakReference<LinksFragment> fragmentRef = mFragments.get(position);
             return fragmentRef == null ? null : fragmentRef.get();
         }
 

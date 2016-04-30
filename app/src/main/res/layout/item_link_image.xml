@@ -15,8 +15,9 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<android.support.percent.PercentRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -26,7 +27,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/bg_post_score" />
+        android:src="@drawable/bg_link_score" />
     <TextView
         android:id="@+id/post_score"
         android:layout_width="40dp"
@@ -35,13 +36,23 @@
         android:layout_marginLeft="16dp"
         style="@style/AppTheme.Post.Score"
         tools:text="1.23k" />
+    <ImageView
+        android:id="@+id/post_preview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="8dp"
+        android:scaleType="centerCrop"
+        app:layout_widthPercent="100%"
+        app:layout_aspectRatio="200%" />
     <TextView
         android:id="@+id/post_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="72dp"
         android:layout_marginRight="8dp"
+        android:layout_below="@id/post_preview"
         style="@style/AppTheme.Post.Title"
         tools:text="Ships fly on sonic shower at astral city! All of those nuclear fluxs will be lost in minds like mysteries in assimilations." />
     <TextView
@@ -54,4 +65,4 @@
         android:layout_below="@id/post_title"
         style="@style/AppTheme.Post.ByLine"
         tools:text="Author \u2022 5 comments \u2022 2d ago" />
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>

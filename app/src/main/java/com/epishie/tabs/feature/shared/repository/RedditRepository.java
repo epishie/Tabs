@@ -22,11 +22,14 @@ import com.epishie.tabs.feature.shared.model.Sort;
 import com.epishie.tabs.feature.shared.model.Subreddit;
 import com.epishie.tabs.feature.shared.model.Thing;
 
+import java.util.List;
+
 import rx.Observable;
 
 public interface RedditRepository {
     Observable<Thing<Listing<Subreddit>>> getSubreddits(String where);
     Observable<Thing<Listing<Link>>> getLinks(String subreddit, Sort sort, FetchType fetchType);
+    Observable<List<Listing>> getLinkComments(String subreddit, String id);
 
     enum FetchType {
         NORMAL,

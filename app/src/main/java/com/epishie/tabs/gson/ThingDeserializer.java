@@ -16,6 +16,7 @@
 
 package com.epishie.tabs.gson;
 
+import com.epishie.tabs.feature.shared.model.Comment;
 import com.epishie.tabs.feature.shared.model.Link;
 import com.epishie.tabs.feature.shared.model.Listing;
 import com.epishie.tabs.feature.shared.model.Subreddit;
@@ -76,6 +77,11 @@ public class ThingDeserializer implements JsonDeserializer<Thing> {
                 Subreddit subreddit = context.deserialize(jsonObject.get(DATA), Subreddit.class);
                 // noinspection unchecked
                 thing = new Thing(id, name, subreddit);
+                break;
+            case Comment.KIND:
+                Comment comment = context.deserialize(jsonObject.get(DATA), Comment.class);
+                // noinspection unchecked
+                thing = new Thing(id, name, comment);
                 break;
         }
         return thing;

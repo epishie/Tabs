@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.epishie.tabs.feature.posts;
+package com.epishie.tabs.feature.links;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import com.epishie.tabs.App;
@@ -51,9 +50,9 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startVisibleFragment;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class PostsFragmentTest {
+public class LinksFragmentTest {
     @Mock
-    PostsFeature.Presenter mPresenter;
+    LinksFeature.Presenter mPresenter;
 
     @Before
     public void setUp() {
@@ -67,23 +66,23 @@ public class PostsFragmentTest {
 
     @Test
     public void testCreateInstance() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.RISING);
-        assertThat(fragment.getArguments()).hasKey(PostsFragment.PARAM_SUBREDDIT);
-        assertThat(fragment.getArguments().getString(PostsFragment.PARAM_SUBREDDIT))
+        LinksFragment fragment = LinksFragment.createInstance("gadgets", Sort.RISING);
+        assertThat(fragment.getArguments()).hasKey(LinksFragment.PARAM_SUBREDDIT);
+        assertThat(fragment.getArguments().getString(LinksFragment.PARAM_SUBREDDIT))
                 .isEqualTo("gadgets");
-        assertThat(fragment.getArguments()).hasKey(PostsFragment.PARAM_SORT);
-        assertThat(fragment.getArguments().getInt(PostsFragment.PARAM_SORT))
+        assertThat(fragment.getArguments()).hasKey(LinksFragment.PARAM_SORT);
+        assertThat(fragment.getArguments().getInt(LinksFragment.PARAM_SORT))
                 .isEqualTo(Sort.RISING.ordinal());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testMissingParamSubreddit() {
-        startVisibleFragment(new PostsFragment());
+        startVisibleFragment(new LinksFragment());
     }
 
     @Test
     public void testOnCreate() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.HOT);
+        LinksFragment fragment = LinksFragment.createInstance("gadgets", Sort.HOT);
         startVisibleFragment(fragment);
 
         verify(mPresenter).setView(fragment);
@@ -92,7 +91,7 @@ public class PostsFragmentTest {
 
     @Test
     public void testShowPosts() {
-        PostsFragment fragment = PostsFragment.createInstance("gadgets", Sort.HOT);
+        LinksFragment fragment = LinksFragment.createInstance("gadgets", Sort.HOT);
         startVisibleFragment(fragment);
         fragment.showPosts(mockPosts(10));
         RecyclerView posts = (RecyclerView) fragment.getView().findViewById(R.id.posts);
@@ -100,10 +99,10 @@ public class PostsFragmentTest {
         assertThat(posts).hasChildCount(10);
     }
 
-    private List<PostViewModel> mockPosts(int count) {
-        List<PostViewModel> posts = new ArrayList<>();
+    private List<LinkViewModel> mockPosts(int count) {
+        List<LinkViewModel> posts = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            PostViewModel post = mock(PostViewModel.class);
+            LinkViewModel post = mock(LinkViewModel.class);
             when(post.getTitle()).thenReturn("Title#" + i);
             posts.add(post);
         }
@@ -116,7 +115,7 @@ public class PostsFragmentTest {
         }
 
         @Override
-        public PostsFeature.Presenter providePostsPresenter(RedditRepository repository,
+        public LinksFeature.Presenter providePostsPresenter(RedditRepository repository,
                                                             @Named("main") Scheduler mainScheduler,
                                                             @Named("worker") Scheduler workerScheduler) {
             return mPresenter;
