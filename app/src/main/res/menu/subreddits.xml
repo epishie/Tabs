@@ -21,12 +21,12 @@
     <item
         android:id="@+id/refresh"
         android:title="@string/lbl_refresh"
-        android:icon="@drawable/ic_refresh_ctl_24dp"
+        android:icon="@drawable/ic_refresh_light_24dp"
         app:showAsAction="always" />
     <item
         android:id="@+id/sort"
         android:title="@string/lbl_sort"
-        android:icon="@drawable/ic_sort_ctl_24dp"
+        android:icon="@drawable/ic_sort_light_24dp"
         app:showAsAction="always">
         <menu>
             <group android:checkableBehavior="single"
@@ -52,6 +52,6 @@
     <item
         android:id="@+id/sidebar"
         android:title="@string/lbl_sidebar"
-        android:icon="@drawable/ic_chrome_reader_mode_ctl_24dp"
+        android:icon="@drawable/ic_chrome_reader_mode_light_24dp"
         app:showAsAction="always" />
 </menu>

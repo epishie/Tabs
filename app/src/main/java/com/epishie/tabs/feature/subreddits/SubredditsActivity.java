@@ -270,7 +270,7 @@ public class SubredditsActivity extends AppCompatActivity implements SubredditsF
         String formatted = "";
         if (subreddit.getSidebar() != null) {
             formatted = getResources().getString(R.string.html_sidebar,
-                    Integer.toHexString(ContextCompat.getColor(this, R.color.blue_grey_500)).substring(2),
+                    Integer.toHexString(ContextCompat.getColor(this, R.color.cyan_900)).substring(2),
                     Html.fromHtml(subreddit.getSidebar()));
         }
         mSidebar.loadDataWithBaseURL(null,
