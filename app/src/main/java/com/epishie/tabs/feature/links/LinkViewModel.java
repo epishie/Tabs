@@ -22,20 +22,20 @@ import android.os.Parcelable;
 public class LinkViewModel implements Parcelable {
     private final String mTitle;
     private final String mByLine;
-    private final String mScore;
+    private final String mScoreLine;
     private final String mPreview;
 
     private LinkViewModel(Builder builder) {
         mTitle = builder.mTitle;
         mByLine = builder.mByLine;
-        mScore = builder.mScore;
+        mScoreLine = builder.mScore;
         mPreview = builder.mPreview;
     }
 
     public LinkViewModel(Parcel in) {
         mTitle = in.readString();
         mByLine = in.readString();
-        mScore = in.readString();
+        mScoreLine = in.readString();
         mPreview = in.readString();
     }
 
@@ -47,8 +47,8 @@ public class LinkViewModel implements Parcelable {
         return mByLine;
     }
 
-    public String getScore() {
-        return mScore;
+    public String getScoreLine() {
+        return mScoreLine;
     }
 
     public String getPreview() {
@@ -64,7 +64,7 @@ public class LinkViewModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mTitle);
         dest.writeString(mByLine);
-        dest.writeString(mScore);
+        dest.writeString(mScoreLine);
         dest.writeString(mPreview);
     }
 

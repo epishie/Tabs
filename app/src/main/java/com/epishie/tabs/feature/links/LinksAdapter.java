@@ -87,13 +87,13 @@ public class LinksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void onBindViewHolder(PostViewHolder holder, LinkViewModel post) {
         holder.mTitle.setText(post.getTitle());
         holder.mByLine.setText(post.getByLine());
-        holder.mScore.setText(post.getScore());
+        holder.mScore.setText(post.getScoreLine());
     }
 
     private void onBindViewHolder(PostPreviewViewHolder holder, LinkViewModel post) {
         holder.mTitle.setText(post.getTitle());
         holder.mByLine.setText(post.getByLine());
-        holder.mScore.setText(post.getScore());
+        holder.mScore.setText(post.getScoreLine());
         Picasso.with(mInflater.getContext())
                 .load(post.getPreview())
                 .into(holder.mPreview);

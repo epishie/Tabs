@@ -55,13 +55,13 @@
             style="@style/AppTheme.Post.Action" />
         <TextView
             android:id="@+id/post_score"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:layout_marginLeft="16dp"
-            android:layout_toLeftOf="@id/downvote"
+            android:padding="8dp"
             android:layout_alignBottom="@id/downvote"
-            style="@style/AppTheme.Post.Score.Light"
+            android:background="@color/grey_600"
+            style="@style/AppTheme.Post.Score"
             tools:text="1.23k" />
         <TextView
             android:id="@+id/post_title"

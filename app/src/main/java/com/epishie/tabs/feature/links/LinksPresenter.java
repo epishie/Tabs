@@ -83,8 +83,9 @@ public class LinksPresenter implements LinksFeature.Presenter {
                             Link link = linkThing.getData();
                             LinkViewModel.Builder builder = new LinkViewModel.Builder();
                             builder.setTitle(link.getTitle());
-                            builder.setScore(FormatUtil.getScore(link.getScore()));
                             Context context = mView.getContext();
+                            builder.setScore(context.getResources().getString(R.string.lbl_post_score_line,
+                                    FormatUtil.getScore(link.getScore())));
                             builder.setByLine(context.getResources().getString(R.string.lbl_post_by_line,
                                     link.getAuthor(),
                                     link.getNumComments(),

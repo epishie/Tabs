@@ -56,7 +56,4 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
-    <style name="AppTheme.Post.Score.Light">
-        <item name="android:textColor">?android:textColorSecondaryInverse</item>
-    </style>
 </resources>
